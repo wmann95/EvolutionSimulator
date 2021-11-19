@@ -14,24 +14,14 @@ World::World(std::string s) {
 
 	std::cout << "World Seed to int: " << getSum(seed) << std::endl;
 
-	std::cout << std::endl;
+	cells = new Cell[10];
+
+}
+World::~World() {
 	for (int i = 0; i < 10; i++) {
-		std::cout << nextRand() << " ";
+		//cells[i].~Cell();
 	}
-	std::cout << std::endl;
-
-
-	NeuralNet nn(this);
-
-	double ins[] = {1.0, 1.0, 1.0};
-
-	std::vector<double> outs = nn.send(ins, 3);
-
-
-	for (int i = 0; i < outs.size(); i++) {
-		std::cout << outs[i] << std::endl;
-	}
-
+	delete[] cells;
 }
 
 void World::Update()
@@ -39,7 +29,11 @@ void World::Update()
 }
 
 void World::Render() {
-	
+
+	for (int i = 0; i < 10; i++) {
+		cells[i].Render();
+	}
+
 }
 
 double World::nextRand() {

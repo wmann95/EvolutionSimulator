@@ -12,7 +12,7 @@ Cell::Cell() {
 }
 
 Cell::~Cell() {
-	shader->Delete();
+	//shader->Delete();
 	delete shader;
 }
 
@@ -22,5 +22,15 @@ void Cell::Update() {
 }
 
 void Cell::Render() {
+	
+	shader->use();
 
+	glm::mat4 transform = glm::mat4(1.0f);
+	glm::mat4 scale = glm::mat4(1.0f);
+
+	shader->setMat4("transform", transform);
+	shader->setMat4("scale", scale);
+
+	glBindVertexArray(triangle.GetVAO());
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 }

@@ -119,3 +119,8 @@ void Shader::Delete() {
 	glDeleteProgram(ID);
 }
 
+void Shader::setMat4(std::string name, glm::mat4 matrix)
+{
+	glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+}
+

@@ -10,9 +10,10 @@ class World
 {
 private:
 	unsigned int getSum(std::string seed);
-	std::vector<Cell> cells;
+	Cell* cells;
 public:
 	World(std::string seed);
+	~World();
 	void Update();
 	void Render();
 	double nextRand();
