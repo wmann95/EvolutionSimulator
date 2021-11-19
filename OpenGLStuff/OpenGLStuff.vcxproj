@@ -153,7 +153,6 @@
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="Shapes.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -163,7 +162,6 @@
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Shape.h" />
-    <ClInclude Include="Shapes.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>

@@ -21,7 +21,6 @@ private:
 	GLFWwindow* InitializeWindow(int width, int height);
 public:
 	Screen(int width, int height);
-	~Screen();
 	void Render(World* world);
 	bool shouldClose();
 	void Kill();
