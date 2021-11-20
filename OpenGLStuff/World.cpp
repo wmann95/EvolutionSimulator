@@ -4,9 +4,8 @@
 
 std::string seed;
 Cell* cells;
-int cellCount = 5;
-Cell* cell1;
-Cell* cell2;
+//Cell* cell1;
+int cellCount = 20;
 
 World::World(std::string s) {
 
@@ -23,45 +22,45 @@ World::World(std::string s) {
 		std::srand(time(NULL));
 	}
 
+	cells = new Cell[cellCount];
 
-	//cells = new Cell[cellCount];
-
-	cell1 = new Cell();
-	cell2 = new Cell();
+	
+	//cell1 = new Cell();
+	//cell1->Initialize(this);
+	//cell2 = new Cell();
 	
 
 	for (int i = 0; i < cellCount; i++) {
-		//cells[i].setWorld(this);
-
-		//std::cout << &cells[i] << std::endl;
+		cells[i].Initialize(this);
 	}
 
 }
 
 World::~World() {
-	//delete[] cells;
-	delete cell1;
-	delete cell2;
+
+	delete[] cells;
+	//delete cell1;
+	//delete cell2;
 }
 
 void World::Update(int deltaTime)
 {
 	for (int i = 0; i < cellCount; i++) {
-		//cells[i].Update();
+		cells[i].Update(deltaTime);
 	}
 
-	cell1->Update(deltaTime);
-	cell2->Update(deltaTime);
+	//cell1->Update(deltaTime);
+	//cell2->Update(deltaTime);
 }
 
 void World::Render() {
 
 	for (int i = 0; i < cellCount; i++) {
-		//cells[i].Render();
+		cells[i].Render();
 	}
 
-	cell2->Render();
-	cell1->Render();
+	//cell2->Render();
+	//cell1->Render();
 }
 
 double World::nextRand() {

@@ -14,6 +14,7 @@ private:
 	std::vector<Node> outputs;
 
 public:
+	NeuralNet();
 	NeuralNet(World* world);
 	void Initialize(int inNodeCount, int hLayerCount, int hLayerNodeCount, int outNodeCount);
 	std::vector<double> send(std::vector<double> inputs);

@@ -4,41 +4,58 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 Cell::Cell() {
+	
+}
+
+void Cell::Initialize(World* world) {
 	shader = new Shader("33shader.vert", "33shader.frag");
 
 	energy = 100.0;
 	rotation = 0.0;
-	velocity = 0.002f;
+	velocity = 0.003f;
 	xPos = 0.0;
 	yPos = 0.0;
 	scale = 1.0f;
+
+	this->world = world;
+
+	network = new NeuralNet(world);
+
 }
 
 Cell::~Cell() {
 	//shader->Delete();
 	delete shader;
+	delete network;
 }
 
 int timer = 2000;
 
 void Cell::Update(int deltaTime) {
 
-	timer -= deltaTime;
-
-	if (timer < 0) {
-		rotation = world->nextRand() * M_PI * 2;
-		timer += 2000;
+	if (energy <= 0) {
+		return;
 	}
 
 
+	double ins[] = { rotation, velocity, (double)((double)deltaTime / 10)};
+	std::vector<double> vec = network->send(ins, 3);
+
+	double dRotation = vec[0] - vec[1];
+	rotation += dRotation / 100;
 
 	if (rotation > 3.14159 * 2) { rotation -= M_PI * 2; }
 	if (rotation < 0) { rotation += M_PI * 2; }
 
-	xPos += sin(rotation) * velocity;
-	yPos += cos(rotation) * velocity;
+	double dX = sin(rotation) * velocity;
+	double dY = cos(rotation) * velocity;
 
-	std::cout << "X: " << xPos << ", Y: " << yPos << std::endl;
+	energy -= std::sqrt(dX * dX + dY * dY) * 10 + std::abs(dRotation) / 10;
+
+	xPos += dX;
+	yPos += dY;
+
+	//std::cout << "X: " << xPos << ", Y: " << yPos << std::endl;
 }
 
 void Cell::Render() {
@@ -60,9 +77,4 @@ void Cell::Render() {
 	glBindVertexArray(triangle.GetVAO());
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 
-}
-
-void Cell::setWorld(World* simWorld)
-{
-	world = simWorld;
 }

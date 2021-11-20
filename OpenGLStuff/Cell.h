@@ -2,6 +2,7 @@
 #include "Shader.h"
 #include "Triangle.h"
 #include "World.h"
+#include "NeuralNet.h"
 
 class Cell
 {
@@ -15,12 +16,13 @@ private:
 	Triangle triangle;
 	Shader* shader;
 	World* world = nullptr;
+	NeuralNet* network;
 
 public:
 	Cell();
 	~Cell();
 	void Update(int deltaTime);
 	void Render();
-	void setWorld(World* simWorld);
+	void Initialize(World* world);
 };
 

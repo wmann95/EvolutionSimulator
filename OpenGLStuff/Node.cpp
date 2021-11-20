@@ -17,6 +17,7 @@ void Node::passThru() {
 	for (int i = 0; i < connectedNodes.size(); i++) {
 		connectedNodes[i]->passThru();
 	}
+
 }
 
 void Node::addValue(double val) {
@@ -26,4 +27,8 @@ void Node::addValue(double val) {
 double Node::getValue()
 {
 	return sum;
+}
+
+void Node::Clear() {
+	sum = 0;
 }

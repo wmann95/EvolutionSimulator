@@ -5,6 +5,8 @@
 double weight = 0.5;
 World* world;
 
+NeuralNet::NeuralNet() {}
+
 NeuralNet::NeuralNet(World* w) {
 	world = w;
 	Initialize(3, 5, 5, 3);
@@ -28,7 +30,7 @@ void NeuralNet::Initialize(int inNodeCount, int hLayerCount, int hLayerNodeCount
 
 				for (int k = 0; k < outNodeCount; k++) {
 
-					n.ConnectNode(&(outputs[k]), (*world).nextRand());
+					n.ConnectNode(&(outputs[k]), (*world).nextRand() / 5000);
 
 				}
 			}
@@ -37,7 +39,7 @@ void NeuralNet::Initialize(int inNodeCount, int hLayerCount, int hLayerNodeCount
 
 					int index = hLayerCount - i - 2;
 
-					n.ConnectNode(&((hiddenLayers[index])[k]), (*world).nextRand());
+					n.ConnectNode(&((hiddenLayers[index])[k]), (*world).nextRand() / 5000);
 				}
 			}
 
@@ -51,7 +53,7 @@ void NeuralNet::Initialize(int inNodeCount, int hLayerCount, int hLayerNodeCount
 		Node n;
 
 		for (int j = 0; j < hLayerNodeCount; j++) {
-			n.ConnectNode(&(hiddenLayers[0][j]), (*world).nextRand());
+			n.ConnectNode(&(hiddenLayers[0][j]), (*world).nextRand() / 5000);
 		}
 
 		inputs.push_back(n);
@@ -74,6 +76,8 @@ std::vector<double> NeuralNet::send(std::vector<double> inVals)
 	for (int i = 0; i < outputs.size(); i++) {
 		outs.push_back(outputs[i].getValue());
 	}
+
+
 
 	return outs;
 }

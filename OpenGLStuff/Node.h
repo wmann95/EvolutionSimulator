@@ -13,5 +13,6 @@ public:
 	void passThru();
 	void addValue(double val);
 	double getValue();
+	void Clear();
 };
 
