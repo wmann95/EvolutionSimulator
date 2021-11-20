@@ -1,39 +1,67 @@
 #include "World.h"
 #include "NeuralNet.h"
+#include "Cell.h"
 
 std::string seed;
+Cell* cells;
+int cellCount = 5;
+Cell* cell1;
+Cell* cell2;
 
 World::World(std::string s) {
 
 	seed = s;
 
+	if (seed != "") {
+		std::cout << "World Seed: " << seed << std::endl;
 
-	std::cout << "World Seed: " << seed << std::endl;
+		std::srand(getSum(seed));
 
-	std::srand(getSum(seed));
-
-	std::cout << "World Seed to int: " << getSum(seed) << std::endl;
-
-	cells = new Cell[10];
-
-}
-World::~World() {
-	for (int i = 0; i < 10; i++) {
-		//cells[i].~Cell();
+		std::cout << "World Seed to int: " << getSum(seed) << std::endl;
 	}
-	delete[] cells;
+	else {
+		std::srand(time(NULL));
+	}
+
+
+	//cells = new Cell[cellCount];
+
+	cell1 = new Cell();
+	cell2 = new Cell();
+	
+
+	for (int i = 0; i < cellCount; i++) {
+		//cells[i].setWorld(this);
+
+		//std::cout << &cells[i] << std::endl;
+	}
+
 }
 
-void World::Update()
+World::~World() {
+	//delete[] cells;
+	delete cell1;
+	delete cell2;
+}
+
+void World::Update(int deltaTime)
 {
+	for (int i = 0; i < cellCount; i++) {
+		//cells[i].Update();
+	}
+
+	cell1->Update(deltaTime);
+	cell2->Update(deltaTime);
 }
 
 void World::Render() {
 
-	for (int i = 0; i < 10; i++) {
-		cells[i].Render();
+	for (int i = 0; i < cellCount; i++) {
+		//cells[i].Render();
 	}
 
+	cell2->Render();
+	cell1->Render();
 }
 
 double World::nextRand() {

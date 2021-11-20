@@ -28,7 +28,7 @@ int main() {
 	scrPtr = &screen;
 
 	// Initialize an instance of a new world with a seed value of "testWorld"
-	World world("testWorld");
+	World world("");
 
 	std::chrono::milliseconds m = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 
@@ -45,7 +45,7 @@ int main() {
 
 		// Render stuff
 		screen.Render(&world);
-
+		world.Update(deltaTime);
 
 		// Example of using GLFW to get key input. Will be extrapolated out later to create input classes and listeners.
 		/*if (glfwGetKey(screen(), GLFW_KEY_SPACE) == GLFW_PRESS) {

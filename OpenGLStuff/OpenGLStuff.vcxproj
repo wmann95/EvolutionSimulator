@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\glad\src\glad.c" />
     <ClCompile Include="Cell.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="NeuralNet.cpp" />
     <ClCompile Include="Node.cpp" />
@@ -157,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cell.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="NeuralNet.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Screen.h" />
