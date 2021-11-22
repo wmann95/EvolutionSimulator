@@ -3,28 +3,30 @@
 #include <math.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-Cell::Cell() {
-	
-}
+// Dummy Constructor
+Cell::Cell() {}
 
 void Cell::Initialize(World* world) {
-	shader = new Shader("33shader.vert", "33shader.frag");
+	
+	shader = new Shader("shader.vert", "shader.frag");
+
+	this->world = world;
 
 	energy = 100.0;
-	rotation = 0.0;
+	rotation = world->nextRand() * M_PI * 2;
 	velocity = 0.003f;
 	xPos = 0.0;
 	yPos = 0.0;
 	scale = 1.0f;
-
-	this->world = world;
+	lifeTime = 0.0;
+	
+	color = glm::vec3(world->nextRand(), world->nextRand(), world->nextRand());
 
 	network = new NeuralNet(world);
 
 }
 
 Cell::~Cell() {
-	//shader->Delete();
 	delete shader;
 	delete network;
 }
@@ -33,10 +35,12 @@ int timer = 2000;
 
 void Cell::Update(int deltaTime) {
 
+
 	if (energy <= 0) {
 		return;
 	}
 
+	lifeTime += deltaTime;
 
 	double ins[] = { rotation, velocity, (double)((double)deltaTime / 10)};
 	std::vector<double> vec = network->send(ins, 3);
@@ -73,8 +77,19 @@ void Cell::Render() {
 	shader->setMat4("transform", transform);
 	shader->setMat4("rotate", rotate);
 	shader->setMat4("scale", scale);
+	
+	glUniform3fv(glGetUniformLocation(shader->ID, "color"), 1, glm::value_ptr(color));
 
 	glBindVertexArray(triangle.GetVAO());
 	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glBindVertexArray(0);
 
+}
+
+double Cell::getLifeTime() {
+	return lifeTime;
+}
+
+bool Cell::isAlive() {
+	return energy > 0;
 }

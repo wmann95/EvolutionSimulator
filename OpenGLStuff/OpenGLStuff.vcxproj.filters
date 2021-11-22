@@ -57,6 +57,9 @@
     <ClCompile Include="Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Food.cpp">
+      <Filter>Source Files\Sim</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="World.h">
@@ -86,6 +89,12 @@
     <ClInclude Include="Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Food.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Circle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO.txt">
@@ -93,10 +102,13 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="33shader.vert">
+    <None Include="shader.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="33shader.frag">
+    <None Include="shader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="circle.geom">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

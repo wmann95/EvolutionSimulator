@@ -18,10 +18,9 @@ public:
 	unsigned int ID;
 
 	Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr);
+	~Shader();
 
 	void use();
-
-	void Delete();
 
 	void setMat4(std::string name, glm::mat4 matrix);
 };

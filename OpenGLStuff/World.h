@@ -9,6 +9,8 @@ class World
 {
 private:
 	unsigned int getSum(std::string seed);
+	void SortCells();
+	bool checkAllDead();
 public:
 	World(std::string seed);
 	~World();

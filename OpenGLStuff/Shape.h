@@ -18,7 +18,6 @@ protected:
 		VBO = 0;
 		EBO = 0;
 	};
-	static float* getVerts() {}
 	virtual void Init(unsigned int* VAO, unsigned int* VBO) = 0;
 	virtual void Initialize() {
 		Init(&VAO, &VBO);

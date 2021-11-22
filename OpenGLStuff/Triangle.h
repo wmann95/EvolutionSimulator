@@ -26,7 +26,6 @@ protected:
 
 		*VAO = vao;
 		*VBO = vbo;
-		std::cout << "TRIANGLE TEST VAO: " << *VAO << std::endl;
 
 	}
 public:

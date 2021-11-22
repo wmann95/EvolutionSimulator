@@ -107,7 +107,10 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
 	if (geometryPath != nullptr) glDeleteShader(geometry);
-	std::cout << "Shader created with ID of: " << ID << std::endl;
+}
+
+Shader::~Shader() {
+	glDeleteProgram(ID);
 }
 
 void Shader::use() {
@@ -115,9 +118,6 @@ void Shader::use() {
 	glUseProgram(ID);
 }
 
-void Shader::Delete() {
-	glDeleteProgram(ID);
-}
 
 void Shader::setMat4(std::string name, glm::mat4 matrix)
 {

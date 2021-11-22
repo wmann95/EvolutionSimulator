@@ -13,6 +13,8 @@ private:
 	double xPos;
 	double yPos;
 	double scale;
+	double lifeTime;
+	glm::vec3 color = glm::vec3(0,0,0);
 	Triangle triangle;
 	Shader* shader;
 	World* world = nullptr;
@@ -24,5 +26,7 @@ public:
 	void Update(int deltaTime);
 	void Render();
 	void Initialize(World* world);
+	double getLifeTime();
+	bool isAlive();
 };
 
