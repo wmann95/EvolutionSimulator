@@ -23,7 +23,7 @@ int main() {
 	scrPtr = &screen;
 
 	// Initialize an instance of a new world with a seed value of "testWorld"
-	World world("");
+	World world("testSeed");
 
 	long long int millis;
 	long long int deltaTime;

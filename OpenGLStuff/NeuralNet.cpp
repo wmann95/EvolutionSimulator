@@ -2,10 +2,55 @@
 #include "Node.h"
 #include <vector>
 
-double weight = 0.5;
-World* world;
 
 NeuralNet::NeuralNet() {}
+
+NeuralNet::NeuralNet(const NeuralNet& old, double m) {
+
+	world = old.world;
+
+	for (int i = 0; i < old.outputs.size(); i++) {
+		Node n;
+		outputs.push_back(n);
+	}
+
+	for (int i = old.hiddenLayers.size() - 1; i >= 0; i--) {
+
+		std::vector<Node> layer;
+
+		for (int j = 0; j < old.hiddenLayers[i].size(); j++) {
+			Node n;
+
+			if (i == old.hiddenLayers.size() - 1) {
+				for (int k = 0; k < old.outputs.size(); k++) {
+					n.ConnectNode(&(outputs[k]), old.hiddenLayers[i][j].getWeight(k) + (world->nextRand() * 2 - 1) * m);
+				}
+			}
+			else {
+				for (int k = 0; k < old.hiddenLayers[i].size(); k++) {
+
+					int index = old.hiddenLayers.size() - i - 2;
+
+					n.ConnectNode(&((hiddenLayers[index])[k]), old.hiddenLayers[index + 1][j].getWeight(k) + (world->nextRand() * 2 - 1) * m);
+				}
+			}
+
+			layer.insert(layer.begin(), n);
+		}
+
+		hiddenLayers.push_back(layer);
+	}
+
+	for (int i = 0; i < old.inputs.size(); i++) {
+		Node n;
+
+		for (int j = 0; j < hiddenLayers[0].size(); j++) {
+			n.ConnectNode(&(hiddenLayers[0][j]), old.inputs[i].getWeight(j) + (world->nextRand() * 2 - 1) * m);
+		}
+
+		inputs.push_back(n);
+	}
+}
 
 NeuralNet::NeuralNet(World* w) {
 	world = w;
@@ -89,4 +134,10 @@ std::vector<double> NeuralNet::send(double* inVals, int size) {
 	}
 
 	return send(inArr);
+}
+
+NeuralNet* NeuralNet::mutate(double m) {
+	NeuralNet* buffer = new NeuralNet(*this, m);
+
+	return buffer;
 }

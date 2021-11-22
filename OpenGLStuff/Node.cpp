@@ -1,9 +1,6 @@
 #include "Node.h"
 
-Node::Node()
-{
-	sum = 0;
-}
+Node::Node(){}
 
 void Node::ConnectNode(Node *n, double weight) {
 	connectedNodes.push_back(n);
@@ -24,11 +21,15 @@ void Node::addValue(double val) {
 	sum += val;
 }
 
-double Node::getValue()
+double Node::getValue() const
 {
 	return sum;
 }
 
 void Node::Clear() {
 	sum = 0;
+}
+
+double Node::getWeight(int node) const {
+	return weights[node];
 }

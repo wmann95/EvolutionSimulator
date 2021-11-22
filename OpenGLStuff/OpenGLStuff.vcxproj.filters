@@ -108,8 +108,5 @@
     <None Include="shader.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="circle.geom">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

@@ -4,12 +4,10 @@
 #include "Food.h"
 
 std::string seed;
-Cell* cells;
 std::vector<Cell*> cellList;
-//Cell* cell1;
-int cellCount = 20;
+int cellCount = 50;
 
-Food* food1;
+//Food* food1;
 
 World::World(std::string s) {
 
@@ -26,15 +24,7 @@ World::World(std::string s) {
 		std::srand(time(NULL));
 	}
 
-	//cells = new Cell[cellCount];
-
 	
-	//cell1 = new Cell();
-	//cell1->Initialize(this);
-	//cell2 = new Cell();
-	
-	cells = nullptr;
-
 	for (int i = 0; i < cellCount; i++) {
 		Cell* cell = (Cell*)malloc(sizeof(Cell));
 
@@ -47,8 +37,8 @@ World::World(std::string s) {
 	}
 	
 
-	food1 = new Food();
-	food1->Initialize(this);
+	//food1 = new Food();
+	//food1->Initialize(this);
 
 }
 
@@ -58,47 +48,49 @@ World::~World() {
 		delete cellList[i];
 	}
 
-	//delete[] cells;
-	//delete cell1;
-	//delete cell2;
-
-	delete food1;
+	//delete food1;
 }
 
-bool sorted = false;
 
 void World::Update(int deltaTime)
 {
 	if (this->checkAllDead()) {
-		if (!sorted) {
-			this->SortCells();
 
-			std::cout << "Sorted! Winner lifetime is: " << cellList[0]->getLifeTime() << std::endl;
-			sorted = true;
+		this->SortCells();
+
+		std::cout << "Sorted! Winner lifetime is: " << cellList[0]->getLifeTime() << std::endl;
+
+		std::vector<Cell*> winnerList;
+
+		for (int i = 0; i < cellList.size() / 4; i++) {
+			winnerList.push_back(cellList[i]);
 		}
 
-		return;
+		std::vector<Cell*> newCells;
+
+		for (int i = 0; i < cellList.size(); i++) {
+			newCells.push_back(new Cell(*winnerList[nextRand() * winnerList.size()], 0.0000001));
+		}
+
+		for (int i = 0; i < cellList.size(); i++) {
+			delete cellList[i];
+			cellList[i] = newCells[i];
+		}
 	}
 
 	for (int i = 0; i < cellCount; i++) {
-		//cells[i].Update(deltaTime);
 		cellList[i]->Update(deltaTime);
 	}
 
-	//cell1->Update(deltaTime);
-	//cell2->Update(deltaTime);
 }
 
 void World::Render() {
 
 	for (int i = 0; i < cellCount; i++) {
-		//cells[i].Render();
 		cellList[i]->Render();
 	}
 
-	//cell2->Render();
-	//cell1->Render();
-	food1->Render();
+	//food1->Render();
 }
 
 double World::nextRand() {
@@ -151,13 +143,7 @@ void World::SortCells() {
 bool World::checkAllDead() {
 
 	for (int i = 0; i < cellCount; i++) {
-		if (cells == nullptr) {
-			if (cellList[i]->isAlive()) {
-				return false;
-			}
-			continue;
-		}
-		else if (cells[i].isAlive()) {
+		if (cellList[i]->isAlive()) {
 			return false;
 		}
 	}

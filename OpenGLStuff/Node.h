@@ -6,13 +6,14 @@ class Node
 private:
 	std::vector<Node*> connectedNodes;
 	std::vector<double> weights;
-	double sum;
+	double sum = 0;
 public:
 	Node();
 	void ConnectNode(Node *n, double weight);
 	void passThru();
 	void addValue(double val);
-	double getValue();
+	double getValue() const;
+	double getWeight(int node) const;
 	void Clear();
 };
 

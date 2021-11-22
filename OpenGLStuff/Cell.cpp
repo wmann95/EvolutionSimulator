@@ -6,23 +6,18 @@
 // Dummy Constructor
 Cell::Cell() {}
 
-void Cell::Initialize(World* world) {
-	
+Cell::Cell(const Cell& oldCell, double m) {
+
+
 	shader = new Shader("shader.vert", "shader.frag");
 
-	this->world = world;
+	this->world = oldCell.world;
 
-	energy = 100.0;
 	rotation = world->nextRand() * M_PI * 2;
-	velocity = 0.003f;
-	xPos = 0.0;
-	yPos = 0.0;
-	scale = 1.0f;
-	lifeTime = 0.0;
-	
+
 	color = glm::vec3(world->nextRand(), world->nextRand(), world->nextRand());
 
-	network = new NeuralNet(world);
+	network = oldCell.network->mutate(m);
 
 }
 
@@ -31,10 +26,21 @@ Cell::~Cell() {
 	delete network;
 }
 
-int timer = 2000;
+void Cell::Initialize(World* world) {
+	
+	shader = new Shader("shader.vert", "shader.frag");
+
+	this->world = world;
+
+	rotation = world->nextRand() * M_PI * 2;
+	
+	color = glm::vec3(world->nextRand(), world->nextRand(), world->nextRand());
+
+	network = new NeuralNet(world);
+
+}
 
 void Cell::Update(int deltaTime) {
-
 
 	if (energy <= 0) {
 		return;
@@ -59,7 +65,6 @@ void Cell::Update(int deltaTime) {
 	xPos += dX;
 	yPos += dY;
 
-	//std::cout << "X: " << xPos << ", Y: " << yPos << std::endl;
 }
 
 void Cell::Render() {
@@ -92,4 +97,8 @@ double Cell::getLifeTime() {
 
 bool Cell::isAlive() {
 	return energy > 0;
+}
+
+Cell* Cell::mutate(double m) {
+	return new Cell(*this, m);
 }
