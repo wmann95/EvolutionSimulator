@@ -65,12 +65,17 @@ World::~World() {
 	delete food1;
 }
 
+bool sorted = false;
+
 void World::Update(int deltaTime)
 {
 	if (this->checkAllDead()) {
-		//this->SortCells();
+		if (!sorted) {
+			this->SortCells();
 
-		//std::cout << "Sorted" << std::endl;
+			std::cout << "Sorted! Winner lifetime is: " << cellList[0]->getLifeTime() << std::endl;
+			sorted = true;
+		}
 
 		return;
 	}
@@ -118,40 +123,29 @@ unsigned int World::getSum(std::string seed) {
 }
 
 void World::SortCells() {
-	Cell** sortedCells = new Cell*[cellCount];
-	int n = 0;
 
-	for (int i = 0; i < cellCount; i++) {
+	std::vector<Cell*> sortedCells;
+
+	for (int i = 0; i < cellList.size(); i++) {
 		if (i == 0) {
-			sortedCells[n++] = &cells[i];
+			sortedCells.push_back(cellList[i]);
 			continue;
 		}
-		for (int j = 0; j < n + 1; j++) {
-			if (cells[i].getLifeTime() > ((*sortedCells)[j]).getLifeTime()) {
-
-				for (int k = i - j - 1; k >= 0; k--) {
-					sortedCells[k + j + 1] = sortedCells[k + j];
-				}
-
-				sortedCells[j] = &cells[i];
-				n++;
+		for (int j = 0; j < sortedCells.size(); j++) {
+			if (cellList[i]->getLifeTime() > sortedCells[j]->getLifeTime()) {
+				sortedCells.insert(sortedCells.begin() + j, cellList[i]);
 				break;
-
 			}
-			else if (j == n) {
-				sortedCells[++n] = &cells[i];
+			else if (j == sortedCells.size() - 1) {
+				sortedCells.push_back(cellList[i]);
 				break;
 			}
 		}
 	}
 
-	delete[] cells;
-	cells = *sortedCells;
-
-	for (int i = 0; i < cellCount; i++) {
-		std::cout << cells[i].getLifeTime() << std::endl;
+	for (int i = 0; i < cellList.size(); i++) {
+		cellList[i] = sortedCells[i];
 	}
-
 }
 
 bool World::checkAllDead() {

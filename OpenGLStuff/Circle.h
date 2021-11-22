@@ -57,7 +57,7 @@ protected:
 
 	}
 public:
-	static const int resolutionScalar = 10;
+	static const int resolutionScalar = 4;
 	static const int vert3count = (Circle::resolutionScalar * 4 * 3 + Circle::resolutionScalar) * 3;
 	Circle() {
 		Shape::Initialize();
