@@ -3,6 +3,8 @@
 #include "World.h"
 #include <vector>
 
+class World;
+
 class NeuralNet
 {
 private:

@@ -1,11 +1,7 @@
 #include "World.h"
 #include "NeuralNet.h"
-#include "Cell.h"
 #include "Food.h"
 
-std::string seed;
-std::vector<Cell*> cellList;
-int cellCount = 50;
 
 //Food* food1;
 
@@ -26,14 +22,10 @@ World::World(std::string s) {
 
 	
 	for (int i = 0; i < cellCount; i++) {
-		Cell* cell = (Cell*)malloc(sizeof(Cell));
 
-		cell = new Cell();
-		cell->Initialize(this);
+		Cell* cell = new Cell(this);
 
 		cellList.push_back(cell);
-
-		//cells[i].Initialize(this);
 	}
 	
 

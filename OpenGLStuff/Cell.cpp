@@ -4,11 +4,20 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 // Dummy Constructor
-Cell::Cell() {}
+Cell::Cell(World* world) {
+
+	shader = new Shader("shader.vert", "shader.frag");
+
+	this->world = world;
+
+	rotation = world->nextRand() * M_PI * 2;
+
+	color = glm::vec3(world->nextRand(), world->nextRand(), world->nextRand());
+
+	network = new NeuralNet(world);
+}
 
 Cell::Cell(const Cell& oldCell, double m) {
-
-
 	shader = new Shader("shader.vert", "shader.frag");
 
 	this->world = oldCell.world;
@@ -17,6 +26,7 @@ Cell::Cell(const Cell& oldCell, double m) {
 
 	color = glm::vec3(world->nextRand(), world->nextRand(), world->nextRand());
 
+	delete network;
 	network = oldCell.network->mutate(m);
 
 }
@@ -26,19 +36,6 @@ Cell::~Cell() {
 	delete network;
 }
 
-void Cell::Initialize(World* world) {
-	
-	shader = new Shader("shader.vert", "shader.frag");
-
-	this->world = world;
-
-	rotation = world->nextRand() * M_PI * 2;
-	
-	color = glm::vec3(world->nextRand(), world->nextRand(), world->nextRand());
-
-	network = new NeuralNet(world);
-
-}
 
 void Cell::Update(int deltaTime) {
 

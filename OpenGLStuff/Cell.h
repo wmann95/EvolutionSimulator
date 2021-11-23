@@ -4,6 +4,9 @@
 #include "World.h"
 #include "NeuralNet.h"
 
+class World;
+class NeuralNet;
+
 class Cell
 {
 private:
@@ -21,12 +24,11 @@ private:
 	NeuralNet* network;
 
 public:
-	Cell();
+	Cell(World* world);
 	Cell(const Cell&, double m);
 	~Cell();
 	void Update(int deltaTime);
 	void Render();
-	void Initialize(World* world);
 	double getLifeTime();
 	bool isAlive();
 	Cell* mutate(double m);
