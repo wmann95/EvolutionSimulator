@@ -14,7 +14,7 @@ private:
 	World* world;
 
 public:
-	NeuralNet();
+	NeuralNet(World* w, int inNodeCount, int hLayerCount, int hLayerNodeCount, int outNodeCount);
 	NeuralNet(const NeuralNet& old, double m);
 	NeuralNet(World* world);
 	void Initialize(int inNodeCount, int hLayerCount, int hLayerNodeCount, int outNodeCount);

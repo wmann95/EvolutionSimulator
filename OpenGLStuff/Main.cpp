@@ -9,7 +9,6 @@
 
 int main() {
 	std::cout << "Start..." << std::endl;
-
 	{
 		// Initialize the opengl window at 800 by 600 pixels.
 		Screen screen(800, 800);
@@ -79,6 +78,5 @@ int main() {
 
 		}
 	}
-
 	return 0;
 }

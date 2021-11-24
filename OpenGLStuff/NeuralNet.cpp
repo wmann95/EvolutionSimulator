@@ -3,7 +3,53 @@
 #include <vector>
 
 
-NeuralNet::NeuralNet() {}
+NeuralNet::NeuralNet(World* w, int inNodeCount, int hLayerCount, int hLayerNodeCount, int outNodeCount) {
+
+	for (int i = 0; i < outNodeCount; i++) {
+		Node n;
+		outputs.push_back(n);
+	}
+
+	for (int i = hLayerCount - 1; i >= 0; i--) {
+
+		std::vector<Node> layer;
+
+		for (int j = 0; j < hLayerNodeCount; j++) {
+			Node n;
+
+			if (i == hLayerCount - 1) {
+
+				for (int k = 0; k < outNodeCount; k++) {
+
+					n.ConnectNode(&(outputs[k]), (*world).nextRand() / 5000);
+
+				}
+			}
+			else {
+				for (int k = 0; k < hLayerNodeCount; k++) {
+
+					int index = hLayerCount - i - 2;
+
+					n.ConnectNode(&((hiddenLayers[index])[k]), (*world).nextRand() / 5000);
+				}
+			}
+
+			layer.insert(layer.begin(), n);
+		}
+
+		hiddenLayers.push_back(layer);
+	}
+
+	for (int i = 0; i < inNodeCount; i++) {
+		Node n;
+
+		for (int j = 0; j < hLayerNodeCount; j++) {
+			n.ConnectNode(&(hiddenLayers[0][j]), (*world).nextRand() / 5000);
+		}
+
+		inputs.push_back(n);
+	}
+}
 
 NeuralNet::NeuralNet(const NeuralNet& old, double m) {
 

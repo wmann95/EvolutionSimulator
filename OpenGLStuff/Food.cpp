@@ -1,15 +1,16 @@
 #include "Food.h"
 #include <glm/gtc/matrix_transform.hpp>
 
-Food::Food() {}
-
-void Food::Initialize(World* w) {
+Food::Food(World* w, double x, double y, int id) {
 	shader = new Shader("shader.vert", "shader.frag");
 
 	world = w;
 
-	color = glm::vec3(0,1,0);
+	xPos = x;
+	yPos = y;
+	ID = id;
 
+	color = glm::vec3(0, 1, 0);
 }
 
 Food::~Food() {
@@ -24,7 +25,7 @@ void Food::Render() {
 	glm::mat4 scale = glm::mat4(1.0f);
 
 	transform = glm::translate(transform, glm::vec3(xPos, yPos, 0));
-	scale = glm::scale(scale, glm::vec3(0.1f, 0.1f, 0));
+	scale = glm::scale(scale, glm::vec3(0.01f, 0.01f, 0));
 
 
 	shader->setMat4("transform", transform);

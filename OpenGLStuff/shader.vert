@@ -8,5 +8,5 @@ uniform mat4 rotate;
 
 void main()
 {
-	gl_Position = scale * transform * rotate * vec4(vp, 1.0);
+	gl_Position = transform * scale * rotate * vec4(vp, 1.0);
 }

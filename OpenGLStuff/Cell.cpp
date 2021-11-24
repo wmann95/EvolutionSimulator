@@ -4,17 +4,20 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 // Dummy Constructor
-Cell::Cell(World* world) {
+Cell::Cell(World* world, int id) {
 
 	shader = new Shader("shader.vert", "shader.frag");
 
 	this->world = world;
 
-	rotation = world->nextRand() * M_PI * 2;
+	rotation = abs(world->nextRand() - world->nextRand()) * M_PI * 2;
+	//rotation = 0;
 
 	color = glm::vec3(world->nextRand(), world->nextRand(), world->nextRand());
 
-	network = new NeuralNet(world);
+	network = new NeuralNet(world, 5, 5, 5, 3);
+
+	ID = id;
 }
 
 Cell::Cell(const Cell& oldCell, double m) {
@@ -22,7 +25,8 @@ Cell::Cell(const Cell& oldCell, double m) {
 
 	this->world = oldCell.world;
 
-	rotation = world->nextRand() * M_PI * 2;
+	rotation = abs(world->nextRand() - world->nextRand()) * M_PI * 2;
+	//rotation = 0;
 
 	color = glm::vec3(world->nextRand(), world->nextRand(), world->nextRand());
 
@@ -32,6 +36,7 @@ Cell::Cell(const Cell& oldCell, double m) {
 }
 
 Cell::~Cell() {
+	shader->Delete();
 	delete shader;
 	delete network;
 }
@@ -43,10 +48,14 @@ void Cell::Update(int deltaTime) {
 		return;
 	}
 
+	Food* closest = world->getNearestFood(xPos, yPos, foodEaten);
+
 	lifeTime += deltaTime;
 
-	double ins[] = { rotation, velocity, (double)((double)deltaTime / 10)};
-	std::vector<double> vec = network->send(ins, 3);
+	double ins[] = { rotation, velocity, (double)((double)deltaTime / 10), closest == nullptr ? 1000.0 : closest->getX(), closest == nullptr ? 1000.0 : closest->getY() };
+
+
+	std::vector<double> vec = network->send(ins, 5);
 
 	double dRotation = vec[0] - vec[1];
 	rotation += dRotation / 100;
@@ -62,6 +71,18 @@ void Cell::Update(int deltaTime) {
 	xPos += dX;
 	yPos += dY;
 
+	if (closest == nullptr) {
+		return;
+	}
+	//std::cout << closest->getDist(xPos, yPos) << std::endl;
+
+	if (closest->getDist(xPos, yPos) < 0.035) {
+		foodEaten.push_back(closest->getID());
+		energy += closest->getEnergy();
+
+
+		std::cout << "Food ID of <" << closest->getID() << "> eaten by cell of ID <" << ID << ">" << std::endl;
+	}
 }
 
 void Cell::Render() {
@@ -73,7 +94,7 @@ void Cell::Render() {
 
 	transform = glm::translate(transform, glm::vec3(xPos,yPos,0));
 	rotate = glm::rotate(rotate, (float)(rotation), glm::vec3(0, 0, -1.0f));
-	scale = glm::scale(scale, glm::vec3(0.5f,0.5f,0));
+	scale = glm::scale(scale, glm::vec3(0.1f,0.1f,0));
 
 
 	shader->setMat4("transform", transform);

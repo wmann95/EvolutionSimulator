@@ -10,7 +10,7 @@ class NeuralNet;
 class Cell
 {
 private:
-	double energy = 100.0;
+	double energy = 10.0;
 	double rotation;
 	double velocity = 0.003;
 	double xPos = 0;
@@ -22,9 +22,10 @@ private:
 	Shader* shader;
 	World* world = nullptr;
 	NeuralNet* network;
-
+	std::vector<int> foodEaten;
+	int ID;
 public:
-	Cell(World* world);
+	Cell(World* world, int id);
 	Cell(const Cell&, double m);
 	~Cell();
 	void Update(int deltaTime);
@@ -32,5 +33,8 @@ public:
 	double getLifeTime();
 	bool isAlive();
 	Cell* mutate(double m);
+	int getID() {
+		return ID;
+	}
 };
 
