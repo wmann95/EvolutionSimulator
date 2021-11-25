@@ -10,7 +10,7 @@ class NeuralNet;
 class Cell
 {
 private:
-	double energy = 10.0;
+	double energy = 15.0;
 	double rotation;
 	double velocity = 0.003;
 	double xPos = 0;

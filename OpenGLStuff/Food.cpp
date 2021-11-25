@@ -14,6 +14,7 @@ Food::Food(World* w, double x, double y, int id) {
 }
 
 Food::~Food() {
+	shader->Delete();
 	delete shader;
 }
 

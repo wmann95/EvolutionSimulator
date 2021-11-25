@@ -13,7 +13,7 @@ int main() {
 		// Initialize the opengl window at 800 by 600 pixels.
 		Screen screen(800, 800);
 		// Initialize an instance of a new world with a seed value of "testWorld"
-		World world("testSeed");
+		World world("");
 
 		long long int millis;
 		long long int deltaTime;
@@ -21,8 +21,8 @@ int main() {
 		std::chrono::milliseconds m = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 		millis = m.count();
 
-		int fps = 120;
-		int ups = 120;
+		int fps = 500;
+		int ups = 45;
 
 		int updates = 0;
 		int frames = 0;

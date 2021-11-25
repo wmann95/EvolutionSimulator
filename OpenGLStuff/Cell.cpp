@@ -52,7 +52,7 @@ void Cell::Update(int deltaTime) {
 
 	lifeTime += deltaTime;
 
-	double ins[] = { rotation, velocity, (double)((double)deltaTime / 10), closest == nullptr ? 1000.0 : closest->getX(), closest == nullptr ? 1000.0 : closest->getY() };
+	double ins[] = { rotation, velocity, (double)((double)deltaTime), closest == nullptr ? 1000.0 : closest->getX(), closest == nullptr ? 1000.0 : closest->getY() };
 
 
 	std::vector<double> vec = network->send(ins, 5);
@@ -63,10 +63,10 @@ void Cell::Update(int deltaTime) {
 	if (rotation > 3.14159 * 2) { rotation -= M_PI * 2; }
 	if (rotation < 0) { rotation += M_PI * 2; }
 
-	double dX = sin(rotation) * velocity;
-	double dY = cos(rotation) * velocity;
+	double dX = sin(rotation) * velocity * 2;
+	double dY = cos(rotation) * velocity * 2;
 
-	energy -= std::sqrt(dX * dX + dY * dY) * 10 + std::abs(dRotation) / 10;
+	energy -= std::sqrt(dX * dX + dY * dY) * 20 + std::abs(dRotation)/7;
 
 	xPos += dX;
 	yPos += dY;
@@ -81,7 +81,7 @@ void Cell::Update(int deltaTime) {
 		energy += closest->getEnergy();
 
 
-		std::cout << "Food ID of <" << closest->getID() << "> eaten by cell of ID <" << ID << ">" << std::endl;
+		//std::cout << "Food ID of <" << closest->getID() << "> eaten by cell of ID <" << ID << ">" << std::endl;
 	}
 }
 

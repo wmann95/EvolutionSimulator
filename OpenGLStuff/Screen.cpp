@@ -75,6 +75,7 @@ void Screen::processInput() {
 		glfwSetWindowShouldClose(window, true);
 	}
 
+
 }
 
 GLFWwindow* Screen::operator ()()

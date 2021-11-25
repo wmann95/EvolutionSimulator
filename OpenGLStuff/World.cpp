@@ -26,7 +26,7 @@ World::World(std::string s) {
 	}
 
 	GenerateFood();
-
+	
 }
 
 World::~World() {
@@ -43,20 +43,25 @@ World::~World() {
 void World::GenerateFood() {
 	std::cout << "Removing old food..." << std::endl;
 
-	if (foodList.size() > 0) {
-		for (int i = 0; i < foodList.size(); i++) {
-			delete foodList[i];
-		}
-
-		foodList.clear();
+	for (int i = 0; i < foodList.size(); i++) {
+		delete foodList[i];
 	}
 
+	foodList.clear();
+	std::vector<Food*>().swap(foodList);
+	foodList.shrink_to_fit();
+
 	std::cout << "Generating food lines..." << std::endl;
+	
+	/*for (int i = 0; i < foodChainCount; i++) {
+		Generate(foodChainLength, 0, 0, (nextRand() * 2 - 1) * M_PI * 2, 0.1);
+	}*/
+
 	for (int n = 0; n < foodChainCount; n++) {
 
 
 		double angle = (nextRand() * 2 - 1) * M_PI * 2;
-		double dist = 0.2;
+		double dist = 0.1;
 		double x = 0;
 		double y = 0;
 
@@ -65,24 +70,45 @@ void World::GenerateFood() {
 
 		for (int i = 0; i < foodChainLength; i++) {
 
+			int id = n * foodChainLength + i;
+
+			angle += (nextRand() * 2 - 1) * (M_PI / 32) * 2;
 			x += sin(angle) * dist;
 			y += cos(angle) * dist;
-			int id = i * n;
-			//std::cout << "<ID: " << id << ", X: " << x << ", Y: " << y << ">" << std::endl;
+			dist *= 1.5;
 
 			Food* food = new Food(this, x, y, id);
 
 			foodList.push_back(food);
 
-			angle += (nextRand() * 2 - 1) * (M_PI / 16);
+			//Generate(chainlink - 1, x, y, angle, dist);
 
 		}
 	}
 }
 
+void World::Generate(int chainlink, double x = 0, double y = 0, double angle = 0, double dist = 0.1) {
+	if (chainlink <= 0) {
+		return;
+	}
+
+	angle += (nextRand() * 2 - 1) * (M_PI / 32) * 2;
+	x += sin(angle) * dist;
+	y += cos(angle) * dist;
+	dist *= 1.5;
+
+	Food* food = new Food(this, x, y, foodList.size());
+
+	foodList.push_back(food);
+
+	Generate(chainlink - 1, x, y, angle, dist);
+
+}
+
 void World::Update(int deltaTime)
 {
-	if (this->checkAllDead()) {
+	if (this->checkAllDead() && cellList.size() > 0) {
+
 
 		this->SortCells();
 
@@ -90,14 +116,14 @@ void World::Update(int deltaTime)
 
 		std::vector<Cell*> winnerList;
 
-		for (int i = 0; i < cellList.size() / 5; i++) {
+		for (int i = 0; i < 1; i++) {
 			winnerList.push_back(cellList[i]);
 		}
 
 		std::vector<Cell*> newCells;
 
 		for (int i = 0; i < cellList.size(); i++) {
-			newCells.push_back(new Cell(*winnerList[nextRand() * winnerList.size()], 0.001));
+			newCells.push_back(new Cell(*winnerList[nextRand() * winnerList.size()], 0.0001));
 		}
 
 		for (int i = 0; i < cellList.size(); i++) {
@@ -108,7 +134,7 @@ void World::Update(int deltaTime)
 		GenerateFood();
 	}
 
-	for (int i = 0; i < cellCount; i++) {
+	for (int i = 0; i < cellList.size(); i++) {
 		cellList[i]->Update(deltaTime);
 	}
 
@@ -176,7 +202,8 @@ void World::SortCells() {
 
 bool World::checkAllDead() {
 
-	for (int i = 0; i < cellCount; i++) {
+
+	for (int i = 0; i < cellList.size(); i++) {
 		if (cellList[i]->isAlive()) {
 			return false;
 		}

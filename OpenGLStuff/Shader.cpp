@@ -109,6 +109,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
 	if (geometryPath != nullptr) glDeleteShader(geometry);
 }
 
+
 void Shader::Delete() {
 	glDeleteProgram(ID);
 }

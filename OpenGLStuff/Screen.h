@@ -26,5 +26,7 @@ public:
 	void Kill();
 	void processInput();
 	GLFWwindow* operator ()();
+
+
 };
 
