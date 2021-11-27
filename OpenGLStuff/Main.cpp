@@ -22,7 +22,7 @@ int main() {
 		millis = m.count();
 
 		int fps = 500;
-		int ups = 45;
+		int ups = 100;
 
 		int updates = 0;
 		int frames = 0;
@@ -66,7 +66,7 @@ int main() {
 			}
 
 			if (clock >= 1000) {
-				std::cout << "FRAMES: " << frames << ", UPDATES: " << updates << std::endl;
+				//std::cout << "FRAMES: " << frames << ", UPDATES: " << updates << std::endl;
 				frames = updates = 0;
 				clock = 0;
 			}

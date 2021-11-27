@@ -46,7 +46,25 @@ Screen::Screen(int width, int height) {
 
 void Screen::Render(World* world) {
 
-	processInput();
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+		glfwSetWindowShouldClose(window, true);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		world->moveCam(0.0, world->getCamSpeed());
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		world->moveCam(0.0, -world->getCamSpeed());
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		world->moveCam(-world->getCamSpeed(), 0.0);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		world->moveCam(world->getCamSpeed(), 0.0);
+	}
 
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -71,11 +89,7 @@ void Screen::Kill()
 }
 
 void Screen::processInput() {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window, true);
-	}
-
-
+	
 }
 
 GLFWwindow* Screen::operator ()()

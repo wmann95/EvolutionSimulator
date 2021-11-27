@@ -3,6 +3,7 @@
 #include <vector>
 
 
+
 NeuralNet::NeuralNet(World* w, int inNodeCount, int hLayerCount, int hLayerNodeCount, int outNodeCount) {
 
 	for (int i = 0; i < outNodeCount; i++) {
@@ -21,7 +22,7 @@ NeuralNet::NeuralNet(World* w, int inNodeCount, int hLayerCount, int hLayerNodeC
 
 				for (int k = 0; k < outNodeCount; k++) {
 
-					n.ConnectNode(&(outputs[k]), (*world).nextRand() / 5000);
+					n.ConnectNode(&(outputs[k]), (1 / (1 + exp((*world).nextRand()))) / 1000.0);
 
 				}
 			}
@@ -30,7 +31,7 @@ NeuralNet::NeuralNet(World* w, int inNodeCount, int hLayerCount, int hLayerNodeC
 
 					int index = hLayerCount - i - 2;
 
-					n.ConnectNode(&((hiddenLayers[index])[k]), (*world).nextRand() / 5000);
+					n.ConnectNode(&((hiddenLayers[index])[k]), (1 / (1 + exp((*world).nextRand()))) / 1000.0);
 				}
 			}
 
@@ -44,7 +45,7 @@ NeuralNet::NeuralNet(World* w, int inNodeCount, int hLayerCount, int hLayerNodeC
 		Node n;
 
 		for (int j = 0; j < hLayerNodeCount; j++) {
-			n.ConnectNode(&(hiddenLayers[0][j]), (*world).nextRand() / 5000);
+			n.ConnectNode(&(hiddenLayers[0][j]), (1 / (1 + exp((*world).nextRand()))) / 1000.0);
 		}
 
 		inputs.push_back(n);

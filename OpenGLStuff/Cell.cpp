@@ -10,12 +10,12 @@ Cell::Cell(World* world, int id) {
 
 	this->world = world;
 
-	rotation = abs(world->nextRand() - world->nextRand()) * M_PI * 2;
-	//rotation = 0;
+	//rotation = abs(world->nextRand() - world->nextRand()) * M_PI * 2;
+	rotation = 0;
 
 	color = glm::vec3(world->nextRand(), world->nextRand(), world->nextRand());
 
-	network = new NeuralNet(world, 5, 5, 5, 3);
+	network = new NeuralNet(world, 5, 5, 10, 5);
 
 	ID = id;
 }
@@ -25,10 +25,17 @@ Cell::Cell(const Cell& oldCell, double m) {
 
 	this->world = oldCell.world;
 
-	rotation = abs(world->nextRand() - world->nextRand()) * M_PI * 2;
-	//rotation = 0;
+	//rotation = abs(world->nextRand() - world->nextRand()) * M_PI * 2;
+	rotation = 0;
 
-	color = glm::vec3(world->nextRand(), world->nextRand(), world->nextRand());
+	this->foodEaten.clear();
+	this->foodEaten = std::vector<int>();
+
+	float colorMutation = 0.1;
+
+	color = (oldCell.color) * (1.0f - colorMutation) + (glm::vec3(world->nextRand(), world->nextRand(), world->nextRand())) * colorMutation;
+
+	//color = glm::vec3(world->nextRand(), world->nextRand(), world->nextRand());
 
 	delete network;
 	network = oldCell.network->mutate(m);
@@ -44,6 +51,7 @@ Cell::~Cell() {
 
 void Cell::Update(int deltaTime) {
 
+
 	if (energy <= 0) {
 		return;
 	}
@@ -52,21 +60,53 @@ void Cell::Update(int deltaTime) {
 
 	lifeTime += deltaTime;
 
-	double ins[] = { rotation, velocity, (double)((double)deltaTime), closest == nullptr ? 1000.0 : closest->getX(), closest == nullptr ? 1000.0 : closest->getY() };
+	double ins[] = { rotation, velocity, deltaTime / 1000.0, closest == nullptr ? 1000.0 : closest->getX(), closest == nullptr ? 1000.0 : closest->getY() };
 
 
 	std::vector<double> vec = network->send(ins, 5);
 
 	double dRotation = vec[0] - vec[1];
-	rotation += dRotation / 100;
+	//double accel = vec[3];
+
+	double maxAccel = 1.0;
+	double minAccel = -1.0;
+
+
+	double accel = vec[3] - vec[4];
+
+
+	if (accel < minAccel) {
+		accel = minAccel;
+	}
+	else if (accel > maxAccel) {
+		accel = maxAccel;
+	}
+
+	rotation += dRotation * deltaTime / 1000.0;
+
+	//velocity += accel * pow(deltaTime / 1000.0, 2);
+
+	velocity = 0.005;
+
+	if (velocity <= 0) {
+		energy = 0;
+		return;
+	}
 
 	if (rotation > 3.14159 * 2) { rotation -= M_PI * 2; }
 	if (rotation < 0) { rotation += M_PI * 2; }
 
-	double dX = sin(rotation) * velocity * 2;
-	double dY = cos(rotation) * velocity * 2;
 
-	energy -= std::sqrt(dX * dX + dY * dY) * 20 + std::abs(dRotation)/7;
+	double dX = sin(rotation) * velocity;
+	double dY = cos(rotation) * velocity;
+
+	distanceTraveled += std::sqrt(dX * dX + dY * dY);
+
+	double dSenergyCost = abs(std::sqrt(dX * dX + dY * dY)) * 80;
+	double dVenergyCost = abs( accel * (deltaTime / 1000.0) * (deltaTime / 1000.0)) * 200.0;
+	double dRenergyCost = abs(dRotation * (deltaTime / 1000.0)) * 2.0;
+
+	energy -= dSenergyCost + dVenergyCost + dRenergyCost;
 
 	xPos += dX;
 	yPos += dY;
@@ -75,11 +115,12 @@ void Cell::Update(int deltaTime) {
 		return;
 	}
 	//std::cout << closest->getDist(xPos, yPos) << std::endl;
-
-	if (closest->getDist(xPos, yPos) < 0.035) {
+	double dist = closest->getDist(xPos, yPos);
+	if (dist < 0.05) {
+		//std::cout << "foodEatenTest" << std::endl;
 		foodEaten.push_back(closest->getID());
 		energy += closest->getEnergy();
-
+		totalFood++;
 
 		//std::cout << "Food ID of <" << closest->getID() << "> eaten by cell of ID <" << ID << ">" << std::endl;
 	}
@@ -93,6 +134,7 @@ void Cell::Render() {
 	glm::mat4 scale = glm::mat4(1.0f);
 
 	transform = glm::translate(transform, glm::vec3(xPos,yPos,0));
+	transform = glm::translate(transform, -world->getCamPos());
 	rotate = glm::rotate(rotate, (float)(rotation), glm::vec3(0, 0, -1.0f));
 	scale = glm::scale(scale, glm::vec3(0.1f,0.1f,0));
 

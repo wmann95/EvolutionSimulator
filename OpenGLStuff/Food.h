@@ -11,14 +11,14 @@ class Food
 private:
 	double energy = 20.0;
 	double xPos = 0.0;
-	double yPos = 0.0;
+	double yPos = -1;
 	Shader* shader;
 	glm::vec3 color;
 	World* world;
 	Circle circle;
 	int ID;
 public:
-	Food(World* world, double xPos, double yPos, int id);
+	Food(World* world, double xPos, double yPos, double energy,int id);
 	~Food();
 	void Render();
 	double getX() {

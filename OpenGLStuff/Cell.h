@@ -10,13 +10,15 @@ class NeuralNet;
 class Cell
 {
 private:
-	double energy = 15.0;
+	double energy = 40.0;
 	double rotation;
 	double velocity = 0.003;
 	double xPos = 0;
 	double yPos = 0.0;
 	double scale = 0.0;
 	double lifeTime = 0.0;
+	double distanceTraveled = 0;
+	int totalFood = 0;
 	glm::vec3 color = glm::vec3(0,0,0);
 	Triangle triangle;
 	Shader* shader;
@@ -35,6 +37,14 @@ public:
 	Cell* mutate(double m);
 	int getID() {
 		return ID;
+	}
+
+	int getTotalFood() {
+		return totalFood;
+	}
+
+	double getDistanceTravelled() {
+		return distanceTraveled;
 	}
 };
 
