@@ -13,6 +13,7 @@ public:
 	void passThru();
 	void addValue(double val);
 	double getValue() const;
+	void Sigmoid();
 	double getWeight(int node) const;
 	void Clear();
 };

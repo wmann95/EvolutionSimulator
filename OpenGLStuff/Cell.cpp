@@ -31,7 +31,7 @@ Cell::Cell(const Cell& oldCell, double m) {
 	this->foodEaten.clear();
 	this->foodEaten = std::vector<int>();
 
-	float colorMutation = 0.1;
+	float colorMutation = 0.2;
 
 	color = (oldCell.color) * (1.0f - colorMutation) + (glm::vec3(world->nextRand(), world->nextRand(), world->nextRand())) * colorMutation;
 

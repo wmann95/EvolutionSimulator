@@ -11,9 +11,10 @@ void Node::passThru() {
 	for (int i = 0; i < connectedNodes.size(); i++) {
 		connectedNodes[i]->addValue(sum * weights[i]);
 	}
-	for (int i = 0; i < connectedNodes.size(); i++) {
+
+	/*for (int i = 0; i < connectedNodes.size(); i++) {
 		connectedNodes[i]->passThru();
-	}
+	}*/
 
 }
 
@@ -28,6 +29,10 @@ double Node::getValue() const
 
 void Node::Clear() {
 	sum = 0;
+}
+
+void Node::Sigmoid() {
+	sum = 1 / (1 + exp(-sum));
 }
 
 double Node::getWeight(int node) const {

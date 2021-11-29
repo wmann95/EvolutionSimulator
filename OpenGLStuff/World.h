@@ -27,7 +27,7 @@ private:
 	double camX = 0;
 	double camY = 0.6;
 	double camSpeed = 0.025;
-	double worldMutator = 0.000075;
+	double worldMutator = 0.005;
 public:
 	World(std::string seed);
 	~World();

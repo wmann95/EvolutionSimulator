@@ -16,8 +16,7 @@ private:
 public:
 	NeuralNet(World* w, int inNodeCount, int hLayerCount, int hLayerNodeCount, int outNodeCount);
 	NeuralNet(const NeuralNet& old, double m);
-	NeuralNet(World* world);
-	void Initialize(int inNodeCount, int hLayerCount, int hLayerNodeCount, int outNodeCount);
+	void Sigmoid();
 	std::vector<double> send(std::vector<double> inputs);
 	std::vector<double> send(double* inVals, int size);
 	NeuralNet* mutate(double m);

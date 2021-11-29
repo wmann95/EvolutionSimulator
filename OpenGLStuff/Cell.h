@@ -44,7 +44,8 @@ public:
 	}
 
 	double getDistanceTravelled() {
-		return distanceTraveled;
+		return sqrt(xPos * xPos + yPos * yPos);
 	}
+
 };
 

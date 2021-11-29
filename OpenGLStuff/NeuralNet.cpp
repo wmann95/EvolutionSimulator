@@ -99,56 +99,22 @@ NeuralNet::NeuralNet(const NeuralNet& old, double m) {
 	}
 }
 
-NeuralNet::NeuralNet(World* w) {
-	world = w;
-	Initialize(3, 5, 5, 3);
-}
+void NeuralNet::Sigmoid() {
 
-void NeuralNet::Initialize(int inNodeCount, int hLayerCount, int hLayerNodeCount, int outNodeCount) {
 
-	for (int i = 0; i < outNodeCount; i++) {
-		Node n;
-		outputs.push_back(n);
+	for (int i = 0; i < outputs.size(); i++) {
+		//outputs[i].Sigmoid();
 	}
 
-	for (int i = hLayerCount - 1; i >= 0; i--) {
+	for (int i = hiddenLayers.size() - 1; i >= 0; i--) {
 
-		std::vector<Node> layer;
-
-		for (int j = 0; j < hLayerNodeCount; j++) {
-			Node n;
-
-			if (i == hLayerCount - 1) {
-
-				for (int k = 0; k < outNodeCount; k++) {
-
-					n.ConnectNode(&(outputs[k]), (*world).nextRand() / 5000);
-
-				}
-			}
-			else {
-				for (int k = 0; k < hLayerNodeCount; k++) {
-
-					int index = hLayerCount - i - 2;
-
-					n.ConnectNode(&((hiddenLayers[index])[k]), (*world).nextRand() / 5000);
-				}
-			}
-
-			layer.insert(layer.begin(), n);
+		for (int j = 0; j < hiddenLayers[i].size(); j++) {
+			hiddenLayers[i][j].Sigmoid();
 		}
-
-		hiddenLayers.push_back(layer);
 	}
 
-	for (int i = 0; i < inNodeCount; i++) {
-		Node n;
-
-		for (int j = 0; j < hLayerNodeCount; j++) {
-			n.ConnectNode(&(hiddenLayers[0][j]), (*world).nextRand() / 5000);
-		}
-
-		inputs.push_back(n);
+	for (int i = 0; i < inputs.size(); i++) {
+		//inputs[i].Sigmoid();
 	}
 }
 
@@ -164,6 +130,15 @@ std::vector<double> NeuralNet::send(std::vector<double> inVals)
 		inputs[i].addValue(inVals[i]);
 		inputs[i].passThru();
 	}
+
+	for (int i = 0; i < hiddenLayers.size(); i++) {
+
+		for (int j = 0; j < hiddenLayers[i].size(); j++) {
+			hiddenLayers[i][j].Sigmoid();
+			hiddenLayers[i][j].passThru();
+		}
+	}
+
 
 	for (int i = 0; i < outputs.size(); i++) {
 		outs.push_back(outputs[i].getValue());
