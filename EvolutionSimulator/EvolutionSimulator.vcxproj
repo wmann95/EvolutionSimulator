@@ -22,8 +22,9 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{3b24ee0e-e459-493e-ae0b-a31e735d23c3}</ProjectGuid>
-    <RootNamespace>OpenGLStuff</RootNamespace>
+    <RootNamespace>EvolutionSimulator</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>EvolutionSimulator</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -119,14 +120,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\Code Projects\glfw-3.3.5.bin.WIN64\include;E:\Code Projects\glad\include;E:\Code Projects\glm</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\glfw-3.3.5.bin.WIN64\include;..\glad\include;..\glm</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>E:\Code Projects\glfw-3.3.5.bin.WIN64\lib-vc2019</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\glfw-3.3.5.bin.WIN64\lib-vc2019</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -146,7 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\glad\src\glad.c" />
+    <ClCompile Include="..\glad\src\glad.c" />
     <ClCompile Include="Cell.cpp" />
     <ClCompile Include="Food.cpp" />
     <ClCompile Include="Input.cpp" />

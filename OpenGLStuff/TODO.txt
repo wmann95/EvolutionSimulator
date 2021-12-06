@@ -1,2 +1,0 @@
-Implement Cell class that includes all stuff required to make the cell render itself
--Create a shape that moves based on the position of the cell.

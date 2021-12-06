@@ -1,5 +1,11 @@
 .vs
 Debug
 x64
-OpenGLStuff/Debug
-OpenGLStuff/x64
+EvolutionSimulator/Debug
+EvolutionSimulator/x64
+glad
+glfw-3.3.5.bin.WIN64
+glm
+ogl-master
+ogl-master-bin
+
