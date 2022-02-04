@@ -19,25 +19,25 @@ private:
 	bool checkAllDead();
 	std::string seed;
 	std::vector<Cell*> cellList;
-	std::vector<Food*> foodList;
+	std::vector<Cell*> deadList;
 	int cellCount = 100;
 	int foodChainCount = 1;
 	int foodChainLength = 20;
 	double maxFoodChainAngle = M_PI/2;
 	double camX = 0;
-	double camY = 0.6;
+	double camY = 0;
 	double camSpeed = 0.025;
 	double worldMutator = 0.005;
 public:
 	World(std::string seed);
 	~World();
-	void GenerateFood();
-	void Generate(int chainlink, double x, double y, double angle, double dist);
+	//void GenerateFood();
+	//void Generate(int chainlink, double x, double y, double angle, double dist);
 	void Update(int deltaTime);
 	void Render();
 	double nextRand();
 	
-	Food* getNearestFood(double xPos, double yPos, std::vector<int> foods);
+	//Food* getNearestFood(double xPos, double yPos, std::vector<int> foods);
 	
 	glm::vec3 getCamPos() {
 		return glm::vec3(camX, camY, 0);

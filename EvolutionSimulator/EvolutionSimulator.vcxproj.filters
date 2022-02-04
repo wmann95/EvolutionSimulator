@@ -28,6 +28,24 @@
     <Filter Include="Source Files\Rendering\Shaders">
       <UniqueIdentifier>{9d50d01e-98ba-476f-bb7e-742d3806897f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\NeuralNet">
+      <UniqueIdentifier>{33858a62-2a40-48aa-8c62-c18eda97e0a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Rendering">
+      <UniqueIdentifier>{83a0bf74-8200-4f9f-95e4-149d6dbb341f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Sim">
+      <UniqueIdentifier>{9f004382-840c-4dde-9973-ad628f7b84fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Rendering\Shaders">
+      <UniqueIdentifier>{0a3fbeef-2555-48d0-ae90-e13442bf1390}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Sim\Cells">
+      <UniqueIdentifier>{1f2f7ab5-9936-48cb-bd60-1fdaeb55355d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Sim\Cells\CellParts">
+      <UniqueIdentifier>{fbc27193-e46c-4db7-a0ba-72da0e4d9e2d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -62,38 +80,50 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="World.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NeuralNet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Node.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Screen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Cell.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Triangle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shape.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Food.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Sim</Filter>
     </ClInclude>
     <ClInclude Include="Circle.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files\Rendering\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="NeuralNet.h">
+      <Filter>Header Files\NeuralNet</Filter>
+    </ClInclude>
+    <ClInclude Include="Node.h">
+      <Filter>Header Files\NeuralNet</Filter>
+    </ClInclude>
+    <ClInclude Include="Screen.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Triangle.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>Header Files\Sim</Filter>
+    </ClInclude>
+    <ClInclude Include="Cell.h">
+      <Filter>Header Files\Sim\Cells</Filter>
+    </ClInclude>
+    <ClInclude Include="CellPart.h">
+      <Filter>Header Files\Sim\Cells\CellParts</Filter>
+    </ClInclude>
+    <ClInclude Include="Mover.h">
+      <Filter>Header Files\Sim\Cells\CellParts</Filter>
+    </ClInclude>
+    <ClInclude Include="Brain.h">
+      <Filter>Header Files\Sim\Cells\CellParts</Filter>
+    </ClInclude>
+    <ClInclude Include="Chloroplast.h">
+      <Filter>Header Files\Sim\Cells\CellParts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

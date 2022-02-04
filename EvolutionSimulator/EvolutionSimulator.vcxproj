@@ -159,10 +159,14 @@
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Brain.h" />
     <ClInclude Include="Cell.h" />
+    <ClInclude Include="CellPart.h" />
+    <ClInclude Include="Chloroplast.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="Food.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Mover.h" />
     <ClInclude Include="NeuralNet.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Screen.h" />

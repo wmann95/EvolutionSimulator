@@ -1,5 +1,8 @@
 #define _USE_MATH_DEFINES
 #include "Cell.h"
+#include "Mover.h"
+#include "Brain.h"
+#include "Chloroplast.h"
 #include <math.h>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -15,9 +18,15 @@ Cell::Cell(World* world, int id) {
 
 	color = glm::vec3(world->nextRand(), world->nextRand(), world->nextRand());
 
-	network = new NeuralNet(world, 5, 5, 10, 5);
 
-	ID = id;
+	//Mover* mover = new Mover(this);
+	//Brain* brain = new Brain(this);
+	Chloroplast* plast = new Chloroplast(this);
+
+	//cellParts.push_back(mover);
+	//cellParts.push_back(brain);
+	cellParts.push_back(plast);
+
 }
 
 Cell::Cell(const Cell& oldCell, double m) {
@@ -25,11 +34,34 @@ Cell::Cell(const Cell& oldCell, double m) {
 
 	this->world = oldCell.world;
 
-	//rotation = abs(world->nextRand() - world->nextRand()) * M_PI * 2;
-	rotation = 0;
+	rotation = abs(world->nextRand() - world->nextRand()) * M_PI * 2;
+	//rotation = 0;
 
-	this->foodEaten.clear();
-	this->foodEaten = std::vector<int>();
+	for (int i = 0; i < oldCell.cellParts.size(); i++) {
+		std::string name = oldCell.cellParts[i]->getName();
+
+		if (name == "Chloroplast") {
+			cellParts.push_back(new Chloroplast(this));
+		}
+		if (name == "Brain") {
+			cellParts.push_back(new Brain(this));
+		}
+		if (name == "Mover") {
+			cellParts.push_back(new Mover(this));
+		}
+	}
+
+	//mutate
+	double mutChance = abs(world->nextRand() - world->nextRand());
+
+	if (mutChance >= 0.95) {
+
+	}
+	
+	double spawnRot = abs(world->nextRand() - world->nextRand()) * M_PI * 2;
+	xPos = sin(spawnRot) * abs(world->nextRand() - world->nextRand()) * 0.5;
+	yPos = cos(spawnRot) * abs(world->nextRand() - world->nextRand()) * 0.5;
+	
 
 	float colorMutation = 0.2;
 
@@ -37,94 +69,103 @@ Cell::Cell(const Cell& oldCell, double m) {
 
 	//color = glm::vec3(world->nextRand(), world->nextRand(), world->nextRand());
 
-	delete network;
-	network = oldCell.network->mutate(m);
 
 }
 
 Cell::~Cell() {
 	shader->Delete();
 	delete shader;
-	delete network;
+	for (int i = 0; i < cellParts.size(); i++) {
+		delete cellParts[i];
+	}
+	cellParts.clear();
 }
-
 
 void Cell::Update(int deltaTime) {
+	lifeTime -= deltaTime / 1000.0;
 
-
-	if (energy <= 0) {
-		return;
-	}
-
-	Food* closest = world->getNearestFood(xPos, yPos, foodEaten);
-
-	lifeTime += deltaTime;
-
-	double ins[] = { rotation, velocity, deltaTime / 1000.0, closest == nullptr ? 1000.0 : closest->getX(), closest == nullptr ? 1000.0 : closest->getY() };
-
-
-	std::vector<double> vec = network->send(ins, 5);
-
-	double dRotation = vec[0] - vec[1];
-	//double accel = vec[3];
-
-	double maxAccel = 1.0;
-	double minAccel = -1.0;
-
-
-	double accel = vec[3] - vec[4];
-
-
-	if (accel < minAccel) {
-		accel = minAccel;
-	}
-	else if (accel > maxAccel) {
-		accel = maxAccel;
-	}
-
-	rotation += dRotation * deltaTime / 1000.0;
-
-	//velocity += accel * pow(deltaTime / 1000.0, 2);
-
-	velocity = 0.005;
-
-	if (velocity <= 0) {
-		energy = 0;
-		return;
-	}
-
-	if (rotation > 3.14159 * 2) { rotation -= M_PI * 2; }
-	if (rotation < 0) { rotation += M_PI * 2; }
-
-
-	double dX = sin(rotation) * velocity;
-	double dY = cos(rotation) * velocity;
-
-	distanceTraveled += std::sqrt(dX * dX + dY * dY);
-
-	double dSenergyCost = abs(std::sqrt(dX * dX + dY * dY)) * 80;
-	double dVenergyCost = abs( accel * (deltaTime / 1000.0) * (deltaTime / 1000.0)) * 200.0;
-	double dRenergyCost = abs(dRotation * (deltaTime / 1000.0)) * 2.0;
-
-	energy -= dSenergyCost + dVenergyCost + dRenergyCost;
-
-	xPos += dX;
-	yPos += dY;
-
-	if (closest == nullptr) {
-		return;
-	}
-	//std::cout << closest->getDist(xPos, yPos) << std::endl;
-	double dist = closest->getDist(xPos, yPos);
-	if (dist < 0.05) {
-		//std::cout << "foodEatenTest" << std::endl;
-		foodEaten.push_back(closest->getID());
-		energy += closest->getEnergy();
-		totalFood++;
-
-		//std::cout << "Food ID of <" << closest->getID() << "> eaten by cell of ID <" << ID << ">" << std::endl;
+	for (int i = 0; i < cellParts.size(); i++) {
+		energy -= cellParts[i]->getEnergyCost();
+		cellParts[i]->Update();
 	}
 }
+
+//void Cell::DepUpdate(int deltaTime) {
+//
+//
+//	if (energy <= 0) {
+//		return;
+//	}
+//
+//	Food* closest = world->getNearestFood(xPos, yPos, foodEaten);
+//
+//	lifeTime += deltaTime;
+//
+//	double ins[] = { rotation, velocity, deltaTime / 1000.0, closest == nullptr ? 1000.0 : closest->getX(), closest == nullptr ? 1000.0 : closest->getY() };
+//
+//
+//	std::vector<double> vec = network->send(ins, 5);
+//
+//	double dRotation = vec[0] - vec[1];
+//	//double accel = vec[3];
+//
+//	double maxAccel = 1.0;
+//	double minAccel = -1.0;
+//
+//
+//	double accel = vec[3] - vec[4];
+//
+//
+//	if (accel < minAccel) {
+//		accel = minAccel;
+//	}
+//	else if (accel > maxAccel) {
+//		accel = maxAccel;
+//	}
+//
+//	rotation += dRotation * deltaTime / 1000.0;
+//
+//	//velocity += accel * pow(deltaTime / 1000.0, 2);
+//
+//	velocity = 0.005;
+//
+//	if (velocity <= 0) {
+//		energy = 0;
+//		return;
+//	}
+//
+//	if (rotation > 3.14159 * 2) { rotation -= M_PI * 2; }
+//	if (rotation < 0) { rotation += M_PI * 2; }
+//
+//
+//	double dX = sin(rotation) * velocity;
+//	double dY = cos(rotation) * velocity;
+//
+//	distanceTraveled += std::sqrt(dX * dX + dY * dY);
+//
+//	double dSenergyCost = abs(std::sqrt(dX * dX + dY * dY)) * 80;
+//	double dVenergyCost = abs( accel * (deltaTime / 1000.0) * (deltaTime / 1000.0)) * 200.0;
+//	double dRenergyCost = abs(dRotation * (deltaTime / 1000.0)) * 2.0;
+//
+//	energy -= dSenergyCost + dVenergyCost + dRenergyCost;
+//
+//	xPos += dX;
+//	yPos += dY;
+//
+//	if (closest == nullptr) {
+//		return;
+//	}
+//	//std::cout << closest->getDist(xPos, yPos) << std::endl;
+//	double dist = closest->getDist(xPos, yPos);
+//	if (dist < 0.05) {
+//		//std::cout << "foodEatenTest" << std::endl;
+//		foodEaten.push_back(closest->getID());
+//		energy += closest->getEnergy();
+//		totalFood++;
+//
+//		//std::cout << "Food ID of <" << closest->getID() << "> eaten by cell of ID <" << ID << ">" << std::endl;
+//	}
+//}
 
 void Cell::Render() {
 	shader->use();
@@ -142,6 +183,10 @@ void Cell::Render() {
 	shader->setMat4("transform", transform);
 	shader->setMat4("rotate", rotate);
 	shader->setMat4("scale", scale);
+
+	if (!isAlive()) {
+		color = glm::vec3(0.3, 0.50, 0.7);
+	}
 	
 	glUniform3fv(glGetUniformLocation(shader->ID, "color"), 1, glm::value_ptr(color));
 
@@ -156,9 +201,43 @@ double Cell::getLifeTime() {
 }
 
 bool Cell::isAlive() {
-	return energy > 0;
+	return energy > 0 && lifeTime > 0;
 }
 
 Cell* Cell::mutate(double m) {
 	return new Cell(*this, m);
+}
+
+void Cell::Move(double xMove, double yMove) {
+	xPos += xMove;
+	yPos += yMove;
+}
+
+double Cell::getDistanceTravelled() {
+	return sqrt(xPos * xPos + yPos * yPos);
+}
+
+int Cell::getTotalFood() {
+	return totalFood;
+}
+
+bool Cell::hasCellPart(std::string partName) {
+	for (CellPart* part : cellParts) {
+		if (part->getName() == partName) {
+			return true;
+		}
+	}
+	return false;
+}
+
+std::vector<CellPart*> Cell::getCellParts() {
+	return cellParts;
+}
+
+void Cell::feed(double amount) {
+	energy += amount;
+}
+
+bool Cell::canReproduce() {
+	return isAlive() && energy > reproductionCost * 1.3;
 }

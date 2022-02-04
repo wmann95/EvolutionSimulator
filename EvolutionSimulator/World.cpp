@@ -18,15 +18,12 @@ World::World(std::string s) {
 		std::srand(time(NULL));
 	}
 
-	
-	for (int i = 0; i < cellCount; i++) {
 
-		Cell* cell = new Cell(this, i);
+	Cell* cell = new Cell(this, 0);
 
-		cellList.push_back(cell);
-	}
+	cellList.push_back(cell);
 
-	GenerateFood();
+	//GenerateFood();
 	
 }
 
@@ -36,137 +33,154 @@ World::~World() {
 		delete cellList[i];
 	}
 
-	for (int i = 0; i < foodList.size(); i++) {
+	/*for (int i = 0; i < foodList.size(); i++) {
 		delete foodList[i];
-	}
-}
-
-void World::GenerateFood() {
-	//std::cout << "Removing old food..." << std::endl;
-
-	for (int i = 0; i < foodList.size(); i++) {
-		delete foodList[i];
-	}
-
-	foodList.clear();
-	std::vector<Food*>().swap(foodList);
-	foodList.shrink_to_fit();
-
-	//std::cout << "Generating food lines..." << std::endl;
-	
-	/*for (int i = 0; i < foodChainCount; i++) {
-		Generate(foodChainLength, 0, 0, (nextRand() * 2 - 1) * M_PI * 2, 0.1);
 	}*/
-
-	for (int n = 0; n < foodChainCount; n++) {
-
-
-		//double angle = (nextRand() * 2 - 1) * M_PI * 2;
-		double angle = 0;
-		double dist = 0.1;
-		double x = 0;
-		double y = 0.3;
-		double energy = 10;
-
-		//std::cout << "[Angle: " << angle << ", dist: " << dist << ", X: " << x << ", Y " << y << "]" << std::endl;
-
-		Food* food = new Food(this, x, y, energy, 0);
-
-		foodList.push_back(food);
-
-		for (int i = 1; i < foodChainLength; i++) {
-
-			int id = n * foodChainLength + i;
-
-			angle += (nextRand() * 2 - 1) * (M_PI / 5);
-			x += sin(angle) * dist;
-			y += cos(angle) * dist;
-			dist *= 1.6;
-			energy *= 2;
-
-
-			Food* food = new Food(this, x, y, energy,id);
-
-			foodList.push_back(food);
-
-			//Generate(chainlink - 1, x, y, angle, dist);
-
-		}
-	}
 }
 
+//
+//void World::GenerateFood() {
+//	//std::cout << "Removing old food..." << std::endl;
+//
+//	for (int i = 0; i < foodList.size(); i++) {
+//		delete foodList[i];
+//	}
+//
+//	foodList.clear();
+//	std::vector<Food*>().swap(foodList);
+//	foodList.shrink_to_fit();
+//
+//	//std::cout << "Generating food lines..." << std::endl;
+//	
+//	/*for (int i = 0; i < foodChainCount; i++) {
+//		Generate(foodChainLength, 0, 0, (nextRand() * 2 - 1) * M_PI * 2, 0.1);
+//	}*/
+//
+//	for (int n = 0; n < foodChainCount; n++) {
+//
+//
+//		//double angle = (nextRand() * 2 - 1) * M_PI * 2;
+//		double angle = 0;
+//		double dist = 0.1;
+//		double x = 0;
+//		double y = 0.3;
+//		double energy = 10;
+//
+//		//std::cout << "[Angle: " << angle << ", dist: " << dist << ", X: " << x << ", Y " << y << "]" << std::endl;
+//
+//		Food* food = new Food(this, x, y, energy, 0);
+//
+//		foodList.push_back(food);
+//
+//		for (int i = 1; i < foodChainLength; i++) {
+//
+//			int id = n * foodChainLength + i;
+//
+//			angle += (nextRand() * 2 - 1) * (M_PI / 5);
+//			x += sin(angle) * dist;
+//			y += cos(angle) * dist;
+//			dist *= 1.6;
+//			energy *= 2;
+//
+//
+//			Food* food = new Food(this, x, y, energy,id);
+//
+//			foodList.push_back(food);
+//
+//			//Generate(chainlink - 1, x, y, angle, dist);
+//
+//		}
+//	}
+//}
 
-void World::Generate(int chainlink, double x = 0, double y = 0, double angle = 0, double dist = 0.1) {
-	if (chainlink <= 0) {
-		return;
-	}
-
-	angle += (nextRand() * 2 - 1) * (M_PI / 32) * 2;
-	x += sin(angle) * dist;
-	y += cos(angle) * dist;
-	dist *= 1.5;
-
-	Food* food = new Food(this, x, y, 0, foodList.size());
-
-	foodList.push_back(food);
-
-	Generate(chainlink - 1, x, y, angle, dist);
-
-}
+//void World::Generate(int chainlink, double x = 0, double y = 0, double angle = 0, double dist = 0.1) {
+//	if (chainlink <= 0) {
+//		return;
+//	}
+//
+//	angle += (nextRand() * 2 - 1) * (M_PI / 32) * 2;
+//	x += sin(angle) * dist;
+//	y += cos(angle) * dist;
+//	dist *= 1.5;
+//
+//	Food* food = new Food(this, x, y, 0, foodList.size());
+//
+//	foodList.push_back(food);
+//
+//	Generate(chainlink - 1, x, y, angle, dist);
+//
+//}
 
 void World::Update(int deltaTime)
 {
-	if (this->checkAllDead() && cellList.size() > 0) {
+	//if (this->checkAllDead() && cellList.size() > 0) {
 
 
-		this->SortCells();
+	//	this->SortCells();
 
-		std::cout << "Sorted! Highest score is: " << getScore(cellList[0]) << std::endl;
+	//	std::cout << "Sorted! Highest score is: " << getScore(cellList[0]) << std::endl;
 
-		std::vector<Cell*> winnerList;
+	//	std::vector<Cell*> winnerList;
 
-		double indexLikelihood = 0.1;
+	//	double indexLikelihood = 0.1;
 
-		for (int i = 0; i < cellList.size(); i++) {
+	//	for (int i = 0; i < cellList.size(); i++) {
 
-			Cell* winner = cellList[(cellList.size() - 1) * indexLikelihood * nextRand()];
+	//		Cell* winner = cellList[(cellList.size() - 1) * indexLikelihood * nextRand()];
 
-			std::cout << "Winner chosen with score of: " << getScore(winner) << std::endl;
+	//		std::cout << "Winner chosen with score of: " << getScore(winner) << std::endl;
 
-			winnerList.push_back(winner);
-			if (indexLikelihood < 0) indexLikelihood = 0;
-			else indexLikelihood -= indexLikelihood / ((double)cellList.size());
-		}
+	//		winnerList.push_back(winner);
+	//		if (indexLikelihood < 0) indexLikelihood = 0;
+	//		else indexLikelihood -= indexLikelihood / ((double)cellList.size());
+	//	}
 
-		std::vector<Cell*> newCells;
+	//	std::vector<Cell*> newCells;
 
-		for (int i = 0; i < cellList.size(); i++) {
-			newCells.push_back(new Cell(*winnerList[nextRand() * winnerList.size()], worldMutator));
-		}
+	//	for (int i = 0; i < cellList.size(); i++) {
+	//		newCells.push_back(new Cell(*winnerList[nextRand() * winnerList.size()], worldMutator));
+	//	}
 
-		for (int i = 0; i < cellList.size(); i++) {
-			delete cellList[i];
-			cellList[i] = newCells[i];
-		}
+	//	for (int i = 0; i < cellList.size(); i++) {
+	//		delete cellList[i];
+	//		cellList[i] = newCells[i];
+	//	}
 
-		//GenerateFood();
-	}
+	//	//GenerateFood();
+	//}
 
 	for (int i = 0; i < cellList.size(); i++) {
+		if (cellList[i]->isAlive() == false) {
+			deadList.push_back(cellList[i]);
+			cellList.erase(cellList.begin() + i);
+			i--;
+			continue;
+		}
+
 		cellList[i]->Update(deltaTime);
+
+		if (cellList[i]->canReproduce()) {
+			cellList[i]->feed(-cellList[i]->reproductionCost);
+			cellList.push_back(new Cell(*cellList[i], 0.1));
+		}
 	}
 
 }
 
 void World::Render() {
 
+	for (int i = 0; i < deadList.size(); i++) {
+		deadList[i]->Render();
+	}
+
 	for (int i = 0; i < cellList.size(); i++) {
 		cellList[i]->Render();
 	}
 
-	for (int i = 0; i < foodList.size(); i++) {
+
+	/*for (int i = 0; i < foodList.size(); i++) {
 		foodList[i]->Render();
-	}
+	}*/
 
 	//food1->Render();
 }
@@ -238,31 +252,31 @@ bool World::checkAllDead() {
 	return true;
 }
 
-Food* World::getNearestFood(double xPos, double yPos, std::vector<int> foods) {
-	Food* closest = nullptr;
-	double cDist = -1;
-	for (int i = 0; i < foodList.size(); i++) {
-		bool flag = false;
-		for (int j = 0; j < foods.size(); j++) {
-			// if the food that has already been eaten includes this id, then continue
-			//std::cout << foods[j] << std::endl;
-			//std::cout << foodList[i]->getID() << std::endl;
-			if (foods[j] == foodList[i]->getID()) {
-				flag = true;
-				break;
-			}
-		}
-
-		if (flag) continue;
-
-		double dist = foodList[i]->getDist(xPos, yPos);
-
-		if (closest == nullptr || dist < cDist || dist == -1) {
-			closest = foodList[i];
-			cDist = dist;
-			continue;
-		}
-	}
-
-	return closest;
-}
+//Food* World::getNearestFood(double xPos, double yPos, std::vector<int> foods) {
+//	Food* closest = nullptr;
+//	double cDist = -1;
+//	for (int i = 0; i < foodList.size(); i++) {
+//		bool flag = false;
+//		for (int j = 0; j < foods.size(); j++) {
+//			// if the food that has already been eaten includes this id, then continue
+//			//std::cout << foods[j] << std::endl;
+//			//std::cout << foodList[i]->getID() << std::endl;
+//			if (foods[j] == foodList[i]->getID()) {
+//				flag = true;
+//				break;
+//			}
+//		}
+//
+//		if (flag) continue;
+//
+//		double dist = foodList[i]->getDist(xPos, yPos);
+//
+//		if (closest == nullptr || dist < cDist || dist == -1) {
+//			closest = foodList[i];
+//			cDist = dist;
+//			continue;
+//		}
+//	}
+//
+//	return closest;
+//}

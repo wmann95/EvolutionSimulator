@@ -1,0 +1,7 @@
+Change cells to have cell parts that can do different functions
+- Main body could be a movement part (The organism can move with this included but currently not doing anything interesting)
+- Mouth part (not added)
+- Photosynthetic part (A chloroplast was added, but still need a visual part for it)
+- Eye part (not added)
+- Hub part (Maybe?)
+- Brain part (needs a way for things to interact with it.)
