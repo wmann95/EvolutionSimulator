@@ -18,6 +18,7 @@ private:
 	unsigned int VBO;
 	unsigned int EBO;
 
+
 	GLFWwindow* InitializeWindow(int width, int height);
 public:
 	Screen(int width, int height);

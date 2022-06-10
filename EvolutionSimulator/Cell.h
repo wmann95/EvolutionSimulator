@@ -1,18 +1,20 @@
 #pragma once
 #include "Shader.h"
 #include "Triangle.h"
+#include "Quad.h"
 #include "World.h"
 #include "NeuralNet.h"
 
 class World;
+class Food;
 class NeuralNet;
 
 class Cell
 {
 private:
-	double energy = 40.0;
+	double energy = 7.0;
 	double rotation;
-	double velocity = 0.003;
+	double velocity = 0.00;
 	double xPos = 0;
 	double yPos = 0.0;
 	double scale = 0.0;
@@ -21,10 +23,15 @@ private:
 	int totalFood = 0;
 	glm::vec3 color = glm::vec3(0,0,0);
 	Triangle triangle;
+	Quad line;
 	Shader* shader;
 	World* world = nullptr;
+	Food* targetFood = nullptr;
 	NeuralNet* network;
 	std::vector<int> foodEaten;
+	bool stoppedFlag;
+	int stoppedTimer = 0;
+	bool deadFlag = false;
 	int ID;
 public:
 	Cell(World* world, int id);
@@ -45,6 +52,7 @@ public:
 
 	double getDistanceTravelled() {
 		return sqrt(xPos * xPos + yPos * yPos);
+		//return yPos;
 	}
 
 };

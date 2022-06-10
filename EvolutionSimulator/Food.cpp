@@ -1,7 +1,7 @@
 #include "Food.h"
 #include <glm/gtc/matrix_transform.hpp>
 
-Food::Food(World* w, double x, double y, double e,int id) {
+Food::Food(World* w, double x, double y, double e, int id) {
 	shader = new Shader("shader.vert", "shader.frag");
 
 	world = w;
@@ -9,8 +9,8 @@ Food::Food(World* w, double x, double y, double e,int id) {
 	xPos = x;
 	yPos = y;
 	ID = id;
-	energy = e;
 	color = glm::vec3(0, 1, 0);
+	energy = e;
 }
 
 Food::~Food() {

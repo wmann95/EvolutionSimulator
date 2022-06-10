@@ -9,7 +9,7 @@ class World;
 class Food
 {
 private:
-	double energy = 20.0;
+	double energy = 0.0;
 	double xPos = 0.0;
 	double yPos = -1;
 	Shader* shader;

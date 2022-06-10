@@ -65,12 +65,11 @@ void World::GenerateFood() {
 		double angle = 0;
 		double dist = 0.1;
 		double x = 0;
-		double y = 0.3;
-		double energy = 10;
+		double y = 0.065;
 
 		//std::cout << "[Angle: " << angle << ", dist: " << dist << ", X: " << x << ", Y " << y << "]" << std::endl;
 
-		Food* food = new Food(this, x, y, energy, 0);
+		Food* food = new Food(this, x, y, foodEnergy, 0);
 
 		foodList.push_back(food);
 
@@ -78,14 +77,12 @@ void World::GenerateFood() {
 
 			int id = n * foodChainLength + i;
 
-			angle += (nextRand() * 2 - 1) * (M_PI / 5);
+			angle += (nextRand() * 2 - 1) * (M_PI / 3.5);
 			x += sin(angle) * dist;
 			y += cos(angle) * dist;
-			dist *= 1.6;
-			energy *= 2;
+			dist *= 1.75;
 
-
-			Food* food = new Food(this, x, y, energy,id);
+			Food* food = new Food(this, x, y, foodEnergy * (i + 1) * 2.0, id);
 
 			foodList.push_back(food);
 
@@ -123,36 +120,54 @@ void World::Update(int deltaTime)
 
 		std::cout << "Sorted! Highest score is: " << getScore(cellList[0]) << std::endl;
 
-		std::vector<Cell*> winnerList;
+		std::vector<Cell*> winnerList = std::vector<Cell*>();
+		//std::vector<Cell*>().swap(winnerList);
+		//winnerList.clear();
 
-		double indexLikelihood = 0.1;
+		double indexLikelihood = 0.05;
 
-		for (int i = 0; i < cellList.size(); i++) {
+		//for (int i = 0; i < cellList.size(); i++) {
 
-			Cell* winner = cellList[(cellList.size() - 1) * indexLikelihood * nextRand()];
+		//	//Cell* winner = cellList[(cellList.size() - 1) * indexLikelihood * nextRand()];
+		//	Cell* winner = cellList[0];
 
-			std::cout << "Winner chosen with score of: " << getScore(winner) << std::endl;
+		//	//std::cout << "Winner chosen with score of: " << getScore(winner) << std::endl;
 
-			winnerList.push_back(winner);
-			if (indexLikelihood < 0) indexLikelihood = 0;
-			else indexLikelihood -= indexLikelihood / ((double)cellList.size());
+		//	winnerList.push_back(winner);
+		//	if (indexLikelihood < 0) indexLikelihood = 0;
+		//	else indexLikelihood -= indexLikelihood / ((double)cellList.size());
+		//}
+
+
+		for (int i = 0; i < (cellList.size() > 20? 20 : cellList.size()); i++) {
+			//std::cout << getScore(cellList[i]) << std::endl;
+			winnerList.push_back(cellList[i]);
 		}
 
 		std::vector<Cell*> newCells;
 
 		for (int i = 0; i < cellList.size(); i++) {
-			newCells.push_back(new Cell(*winnerList[nextRand() * winnerList.size()], worldMutator));
+			//std::cout << "Selected winner: " << getScore(winnerList[i % winnerList.size()]) << std::endl;
+			newCells.push_back(new Cell(*winnerList[i % winnerList.size()], worldMutator));
+			//newCells.push_back(new Cell(*cellList[0], worldMutator));
 		}
 
 		for (int i = 0; i < cellList.size(); i++) {
 			delete cellList[i];
-			cellList[i] = newCells[i];
+		}
+		
+		cellList.clear();
+		//std::vector<Cell*>().swap(cellList);
+
+		for (int i = 0; i < newCells.size(); i++) {
+			cellList.push_back(newCells[i]);
 		}
 
 		//GenerateFood();
 	}
 
 	for (int i = 0; i < cellList.size(); i++) {
+		if (!cellList[i]->isAlive()) continue;
 		cellList[i]->Update(deltaTime);
 	}
 
@@ -193,7 +208,8 @@ unsigned int World::getSum(std::string seed) {
 }
 
 double getScore(Cell* cell) {
-	return cell->getDistanceTravelled() * 100 + cell->getTotalFood() * 100;
+	//std::cout << cell->getTotalFood() << std::endl;
+	return cell->getTotalFood() * 3.0 + cell->getDistanceTravelled() / 100;
 }
 
 void World::SortCells() {
