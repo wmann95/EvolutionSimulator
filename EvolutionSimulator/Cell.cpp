@@ -88,7 +88,7 @@ void Cell::Update(int deltaTime) {
 
 	//velocity = 0.005;
 
-	if (velocity < 0 || abs(accel) >= 1 || abs(dRotation) > 0.04) {
+	if (velocity < 0) {
 		energy = 0;
 
 		//std::cout << "Death by speed or rotation" << std::endl;
@@ -125,7 +125,7 @@ void Cell::Update(int deltaTime) {
 	double dVenergyCost = abs( accel * (deltaTime / 1000.0) * (deltaTime / 1000.0)) * 1.0;
 	double dRenergyCost = abs(dRotation * (deltaTime / 1000.0)) * 0.01;
 
-	double energycost = dVenergyCost * 10 + dRenergyCost + (deltaTime / 1000.0) * 5;
+	double energycost = dVenergyCost * 3 + dRenergyCost + (deltaTime / 1000.0) * 1;
 
 	//std::cout << energycost << std::endl;
 

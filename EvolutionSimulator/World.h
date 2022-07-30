@@ -20,14 +20,14 @@ private:
 	std::string seed;
 	std::vector<Cell*> cellList;
 	std::vector<Food*> foodList;
-	int cellCount = 1;
+	int cellCount = 50;
 	int foodChainCount = 1;
 	int foodChainLength = 20;
 	double maxFoodChainAngle = M_PI/2;
 	double camX = 0;
 	double camY = 0.6;
 	double camSpeed = 0.025;
-	double foodEnergy = 10.0;
+	double foodEnergy = 1.0;
 public:
 	World(std::string seed);
 	~World();
@@ -36,8 +36,8 @@ public:
 	void Update(int deltaTime);
 	void Render();
 	double nextRand();
-	const double worldMutator = 0.0000005;
-	
+	const double worldMutator = 0.005;
+
 	Food* getNearestFood(double xPos, double yPos, std::vector<int> foods);
 	
 	glm::vec3 getCamPos() {

@@ -82,7 +82,7 @@ void World::GenerateFood() {
 			y += cos(angle) * dist;
 			dist *= 1.75;
 
-			Food* food = new Food(this, x, y, foodEnergy * (i + 1) * 2.0, id);
+			Food* food = new Food(this, x, y, foodEnergy * (i + 1) *  1.0, id);
 
 			foodList.push_back(food);
 

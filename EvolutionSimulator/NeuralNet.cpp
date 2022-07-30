@@ -77,7 +77,7 @@ NeuralNet::NeuralNet(const NeuralNet& old, double m) {
 
 	double chance = world->nextRand();
 
-	if (chance > 0.9999) { // new node mutated.
+	if (chance > 0.96) { // new node mutated.
 		std::cout << "New node!" << std::endl;
 		Node n(nodeList.size());
 		nodeList.push_back(n);
@@ -126,7 +126,7 @@ void NeuralNet::MutateConnection(int node1, int node2) {
 
 		//std::cout << "Connection found!" << std::endl;
 
-		if (chance < 0.5) return; // No mutation
+		if (chance < 0.25) return; // No mutation
 		else if (chance >= 0.975) { // remove the connection.
 			std::cout << "Connection erased!" << std::endl;
 			nodeList[node1].connectedNodes.erase(nodeList[node1].connectedNodes.begin() + connID);
@@ -136,7 +136,7 @@ void NeuralNet::MutateConnection(int node1, int node2) {
 
 	}
 	else {
-		if (chance > 0.99) { // create new connection
+		if (chance > 0.80) { // create new connection
 			//std::cout << "New connection made!" << std::endl;
 			ConnectNode(node1, node2);
 		}

@@ -12,7 +12,7 @@ class NeuralNet;
 class Cell
 {
 private:
-	double energy = 7.0;
+	double energy = 2.0;
 	double rotation;
 	double velocity = 0.00;
 	double xPos = 0;
@@ -51,7 +51,7 @@ public:
 	}
 
 	double getDistanceTravelled() {
-		return sqrt(xPos * xPos + yPos * yPos);
+		return distanceTraveled;
 		//return yPos;
 	}
 
