@@ -15,15 +15,16 @@ Cell::Cell(World* world, int id) {
 
 	color = glm::vec3(world->nextRand(), world->nextRand(), world->nextRand());
 
-	network = new NeuralNet(world, 4, 15, 4);
+	network = new NeuralNet(world, 4, 3, 4);
 
 	ID = id;
 }
 
-Cell::Cell(const Cell& oldCell, double m) {
+Cell::Cell(const Cell& oldCell, int id) {
 	shader = new Shader("shader.vert", "shader.frag");
 
 	this->world = oldCell.world;
+	this->ID = id;
 
 	//rotation = abs(world->nextRand() - world->nextRand()) * M_PI * 2;
 	rotation = 0;
@@ -40,7 +41,8 @@ Cell::Cell(const Cell& oldCell, double m) {
 	//color = glm::vec3(world->nextRand(), world->nextRand(), world->nextRand());
 
 	delete network;
-	network = oldCell.network->mutate(m);
+	//network = new NeuralNet(world, 4, 15, 4);
+	network = oldCell.network->mutate();
 
 }
 
@@ -68,7 +70,7 @@ void Cell::Update(int deltaTime) {
 
 	//Food* closest = world->getNearestFood(xPos, yPos, foodEaten);
 
-	lifeTime += deltaTime;
+	lifeTime += deltaTime / 1000.0;
 
 	double ins[] = { xPos, yPos, targetFood == nullptr ? 1000.0 : targetFood->getX(), targetFood == nullptr ? 1000.0 : targetFood->getY() };
 
@@ -80,52 +82,34 @@ void Cell::Update(int deltaTime) {
 	double maxAccel = 1.0;
 	double minAccel = -1.0;
 
-	double dRotation = vec[0] - vec[1];
-	rotation += dRotation * deltaTime;
+	double rotAcc = vec[0] - vec[1];
+	rotation += rotAcc * pow(deltaTime / 1000.0, 2) * 100;
 
 	double accel = vec[2] - vec[3];
-	velocity += accel * pow(deltaTime / 1000.0, 2);
+	velocity += accel * pow(deltaTime / 1000.0, 2) * 0.5;
 
 	//velocity = 0.005;
 
-	if (velocity < 0 || abs(accel) >= 1 || abs(dRotation) > 0.04) {
-		energy = 0;
 
-		//std::cout << "Death by speed or rotation" << std::endl;
-		return;
-	}
-
-	if (velocity <= 0 && !stoppedFlag) {
-		stoppedFlag = true;
-		//std::cout << "stopped" << std::endl;
-	}
-	else if (velocity <= 0 && stoppedFlag && ((double)stoppedTimer) / 1000.0 > 0.1) {
-		energy = 0;
-		//std::cout << "Death by stopping" << std::endl;
-		return;
-	}
-	else if (velocity == 0 && stoppedFlag) {
-		stoppedTimer += deltaTime;
-		//std::cout << ((double)stoppedTimer) / 1000.0 << std::endl;
-	}
-	else if (velocity != 0 && stoppedFlag) {
-		stoppedFlag = false;
-	}
 
 	if (rotation > 3.14159 * 2) { rotation -= M_PI * 2; }
 	if (rotation < 0) { rotation += M_PI * 2; }
 
+	if (abs(velocity) >= 0.005) {
+		energy = 0;
+		return;
+	}
 
 	double dX = sin(rotation) * velocity;
 	double dY = cos(rotation) * velocity;
 
-	if (velocity > 0 && dY > 0) distanceTraveled += dY;
+	if (abs(velocity) > 0) distanceTraveled += sqrt(dX * dX + dY * dY);
 
-	//double dSenergyCost = abs(std::sqrt(dX * dX + dY * dY)) * 1.0;
-	double dVenergyCost = abs( accel * (deltaTime / 1000.0) * (deltaTime / 1000.0)) * 1.0;
-	double dRenergyCost = abs(dRotation * (deltaTime / 1000.0)) * 0.01;
+	double dSenergyCost = abs(std::sqrt(dX * dX + dY * dY)) * 1.0;
+	double dVenergyCost = abs( accel * (deltaTime / 1000.0) * (deltaTime / 1000.0)) * 100;
+	double dRenergyCost = abs( rotAcc * (deltaTime / 1000.0)) * 0.1;
 
-	double energycost = dVenergyCost * 10 + dRenergyCost + (deltaTime / 1000.0) * 5;
+	double energycost = (deltaTime / 1000.0) * 1.0 + dVenergyCost + dRenergyCost + dSenergyCost;
 
 	//std::cout << energycost << std::endl;
 
@@ -137,22 +121,28 @@ void Cell::Update(int deltaTime) {
 	yPos += dY;
 
 	//std::cout << closest->getDist(xPos, yPos) << std::endl;
-	double dist = targetFood->getDist(xPos, yPos);
-	if (dist < 0.02) {
-		//std::cout << "foodEatenTest: "  << targetFood->getID() << std::endl;
-		//foodEaten.push_back(closest->getID());
 
-		//std::cout << "Cell energy: " << energy << std::endl;
-		energy += targetFood->getEnergy();
-		//std::cout << "Food target position (" << targetFood->getX() << ", " << targetFood->getY() << ") : " << targetFood->getEnergy() << std::endl;
-		//std::cout << "Cell energy: " << energy << std::endl;
-		//std::cout << std::endl;
-		totalFood += 1;
-		//std::cout << totalFood << std::endl;
+	if (targetFood != nullptr) {
 
-		targetFood = world->getFoodByID(targetFood->getID() + 1);
-		//std::cout << "Cell ID: " << ID << ", Food target position (" << targetFood->getX() << ", " << targetFood->getY() << ")" << std::endl;
-		//std::cout << "Food ID of <" << closest->getID() << "> eaten by cell of ID <" << ID << ">" << std::endl;
+		double dist = targetFood->getDist(xPos, yPos);
+		
+		if (dist < 0.035) {
+			//std::cout << "foodEatenTest: "  << targetFood->getID() << std::endl;
+			//foodEaten.push_back(closest->getID());
+
+			//std::cout << targetFood->getID() << ": " << ID << ": " << dist << std::endl;
+			//std::cout << "Cell energy: " << energy << std::endl;
+			energy += targetFood->getEnergy();
+			//std::cout << "Food target position (" << targetFood->getX() << ", " << targetFood->getY() << ") : " << targetFood->getEnergy() << std::endl;
+			//std::cout << "Cell energy: " << energy << std::endl;
+			//std::cout << std::endl;
+			totalFood += 1;
+			//std::cout << totalFood << std::endl;
+
+			targetFood = world->getFoodByID(targetFood->getID() + 1);
+			//std::cout << "Cell ID: " << ID << ", Food target position (" << targetFood->getX() << ", " << targetFood->getY() << ")" << std::endl;
+			//std::cout << "Food ID of <" << closest->getID() << "> eaten by cell of ID <" << ID << ">" << std::endl;
+		}
 	}
 }
 

@@ -20,23 +20,26 @@ private:
 	std::string seed;
 	std::vector<Cell*> cellList;
 	std::vector<Food*> foodList;
-	int cellCount = 1;
-	int foodChainCount = 1;
-	int foodChainLength = 20;
-	double maxFoodChainAngle = M_PI/2;
+	int cellCount = 1000;
 	double camX = 0;
 	double camY = 0.6;
 	double camSpeed = 0.025;
-	double foodEnergy = 10.0;
+	double foodEnergy = 3.0;
+	double foodMultiplier = 1.5;
+	int foodChainLength = 200;
+	int foodChainCount = 1;
+	double maxFoodChainAngle = M_PI/4;
+	unsigned int generation = 0;
+
+	std::string gen_random(const int length);
 public:
 	World(std::string seed);
 	~World();
 	void GenerateFood();
-	void Generate(int chainlink, double x, double y, double angle, double dist);
 	void Update(int deltaTime);
 	void Render();
 	double nextRand();
-	const double worldMutator = 0.0000005;
+	const double worldMutator = 2;
 	
 	Food* getNearestFood(double xPos, double yPos, std::vector<int> foods);
 	
@@ -54,6 +57,7 @@ public:
 	};
 
 	Food* getFoodByID(int id) {
+		if (foodList.size() == 0) return nullptr;
 		if (id >= foodList.size()) return foodList[foodList.size() - 1];
 		return foodList[id];
 	}

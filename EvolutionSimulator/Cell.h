@@ -12,9 +12,9 @@ class NeuralNet;
 class Cell
 {
 private:
-	double energy = 7.0;
+	double energy = 2.0;
 	double rotation;
-	double velocity = 0.00;
+	double velocity = 0.000;
 	double xPos = 0;
 	double yPos = 0.0;
 	double scale = 0.0;
@@ -23,8 +23,7 @@ private:
 	int totalFood = 0;
 	glm::vec3 color = glm::vec3(0,0,0);
 	Triangle triangle;
-	Quad line;
-	Shader* shader;
+	Shader* shader = nullptr;
 	World* world = nullptr;
 	Food* targetFood = nullptr;
 	NeuralNet* network;
@@ -35,7 +34,7 @@ private:
 	int ID;
 public:
 	Cell(World* world, int id);
-	Cell(const Cell&, double m);
+	Cell(const Cell&, int id);
 	~Cell();
 	void Update(int deltaTime);
 	void Render();

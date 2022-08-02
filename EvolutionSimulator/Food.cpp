@@ -30,6 +30,7 @@ void Food::Render() {
 	scale = glm::scale(scale, glm::vec3(0.01f, 0.01f, 0));
 
 
+
 	shader->setMat4("transform", transform);
 	shader->setMat4("rotate", rotate);
 	shader->setMat4("scale", scale);

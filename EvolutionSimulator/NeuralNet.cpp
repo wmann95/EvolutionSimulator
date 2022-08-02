@@ -9,28 +9,39 @@ NeuralNet::NeuralNet(World* w, int inNodeCount, int hiddenNodeCount, int outNode
 	world = w;
 
 	for (int i = 0; i < inNodeCount; i++) {
-		Node n(nodeList.size());
-		inputs.push_back(&(n));
+		Node* n = new Node(nodeList.size());
+		inputs.push_back(n);
 		nodeList.push_back(n);
 	}
 
 	for (int i = 0; i < hiddenNodeCount; i++) {
 
-		Node n(nodeList.size());
+		Node* n = new Node(nodeList.size());
 
 		nodeList.push_back(n);
 
 	}
 
-	for (int i = 0; i < inNodeCount; i++) {
+	for (int i = 0; i < outNodeCount; i++) {
 
-		Node n(nodeList.size());
-		outputs.push_back(&(n));
+		Node* n = new Node(nodeList.size());
+		outputs.push_back(n);
 		nodeList.push_back(n);
 
 	}
 
 
+}
+
+NeuralNet::~NeuralNet() {
+
+	for (int i = 0; i < nodeList.size(); i++) {
+		delete nodeList[i];
+	}
+
+	inputs.clear();
+	outputs.clear();
+	nodeList.clear();
 }
 
 NeuralNet::NeuralNet(const NeuralNet& old, double m) {
@@ -41,23 +52,35 @@ NeuralNet::NeuralNet(const NeuralNet& old, double m) {
 	// duplicate the structure of the old neural network.
 
 
-	for (int i = 0; i < old.nodeList.size(); i++) {
-		if (i < old.inputs.size()) { // input nodes
-			Node n(nodeList.size());
-			inputs.push_back(&(n));
-			nodeList.push_back(n);
-		}
-		else if (i >= old.inputs.size() && i < old.nodeList.size() - old.outputs.size()) { // hidden nodes
-			
+	for (int i = 0; i < old.inputs.size(); i++) {
+		//if (i < old.inputs.size()) { // input nodes
 
-			Node n(nodeList.size());
-			nodeList.push_back(n);
-		}
-		else { // output nodes.
-			Node n(nodeList.size());
-			outputs.push_back(&(n));
-			nodeList.push_back(n);
-		}
+		Node* n = new Node(nodeList.size());
+		inputs.push_back(n);
+		nodeList.push_back(n);
+		
+		//}
+		//else if (i >= old.inputs.size() && i < old.nodeList.size() - old.outputs.size()) { // hidden nodes
+		//	Node n(nodeList.size());
+		//	nodeList.push_back(n);
+		//}
+		//else { // output nodes.
+		//	Node n(nodeList.size());
+		//	outputs.push_back(&(n));
+		//	nodeList.push_back(n);
+		//}
+	}
+
+	for (int i = 0; i < old.nodeList.size() - old.inputs.size() - old.outputs.size(); i++) {
+		Node* n = new Node(nodeList.size());
+
+		nodeList.push_back(n);
+	}
+
+	for (int i = 0; i < old.outputs.size(); i++) {
+		Node* n = new Node(nodeList.size());
+		outputs.push_back(n);
+		nodeList.push_back(n);
 	}
 
 	// Remake connections
@@ -65,33 +88,64 @@ NeuralNet::NeuralNet(const NeuralNet& old, double m) {
 	for (int i = 0; i < old.nodeList.size(); i++) {
 		// i will represent the id in the new nodeList.
 
-		for (int j = 0; j < old.nodeList[i].connectedNodes.size(); j++) {
-			int id = old.nodeList[i].connectedNodes[j]->id;
+		for (int j = 0; j < old.nodeList[i]->connectedNodes.size(); j++) {
+			int id = old.nodeList[i]->connectedNodes[j]->id; // This id refers to the id that this node connects to, as per the last nodelist.
 
-			ConnectNode(i, id);
+			ConnectNode(i, id, old.nodeList[i]->getWeight(j)); // (1 / (1 + exp((*world).nextRand()))) / 1000.0
+			/*
+			if (id < nodeList.size() && i < nodeList.size()) {
+				ConnectNode(i, id);
+			}
+			else if (i > nodeList.size() && id > nodeList.size()) {
+				id = world->nextRand() * nodeList.size();
+				ConnectNode(i, id);
+			}
+			else if (i > nodeList.size()) {
+
+				id = world->nextRand() * nodeList.size();
+
+				ConnectNode(i, id);
+
+			}
+			else if (id > nodeList.size()) {
+				id = world->nextRand() * nodeList.size();
+
+				ConnectNode(i, id);
+			}
+			*/
 		}
 
 	}
 
 	// Mutate
 
-	double chance = world->nextRand();
-
-	if (chance > 0.9999) { // new node mutated.
-		std::cout << "New node!" << std::endl;
-		Node n(nodeList.size());
-		nodeList.push_back(n);
-	}
-
 	for (int i = 0; i < muts; i++) {
-		int id1 = nodeList.size() * world->nextRand();
-		int id2 = nodeList.size() * world->nextRand();
 
-		if (id1 == id2) continue;
+		double chance = world->nextRand();
 
-		MutateConnection(id1, id2);
+		if (chance >= 0.95) {
+			Node* n = new Node(nodeList.size());
+
+			int placement = inputs.size() + (int)((nodeList.size() - inputs.size() - outputs.size()) * world->nextRand());
+
+			for (int j = inputs.size() + placement; j < nodeList.size(); j++) {
+				nodeList[j]->id += 1;
+			}
+
+			nodeList.insert(nodeList.begin() + placement, n);
+			//std::cout << "New node! " << nodeList.size() << std::endl;
+		}
+		else if (chance >= 0.4) {
+			int id1 = (nodeList.size() - 1) * world->nextRand();
+			int id2 = (nodeList.size() - 1) * world->nextRand();
+
+			MutateConnection(id1, id2);
+		}
+
+
 
 	}
+
 
 }
 
@@ -112,34 +166,44 @@ bool NeuralNet::recurseLoopFinder(Node* ntf, Node* node) {
 
 void NeuralNet::ConnectNode(int node1, int node2) {
 	if (node2 < inputs.size()) {
-		return; // these are the inputs, we don't want to connect back to the inputs.
+		//return; // these are the inputs, we don't want to connect back to the inputs.
 	}
 
-	nodeList[node1].ConnectNode(&(nodeList[node2]), (1 / (1 + exp((*world).nextRand()))) / 1000.0);
+	nodeList[node1]->ConnectNode(nodeList[node2], (1 / (1 + exp((*world).nextRand()))) / 1000.0);
+}
+
+void NeuralNet::ConnectNode(int node1, int node2, double weight) {
+	if (node2 < inputs.size()) {
+		//return; // these are the inputs, we don't want to connect back to the inputs.
+	}
+
+	nodeList[node1]->ConnectNode(nodeList[node2], weight);
 }
 
 void NeuralNet::MutateConnection(int node1, int node2) {
 	double chance = world->nextRand();
 
-	if (nodeList[node1].isConnectedTo(&(nodeList[node2]))) {
-		int connID = nodeList[node1].getConnection(&(nodeList[node2]));
+	if (nodeList[node1]->isConnectedTo(nodeList[node2])) {
+		int connID = nodeList[node1]->getConnection(nodeList[node2]);
 
+		
 		//std::cout << "Connection found!" << std::endl;
 
-		if (chance < 0.5) return; // No mutation
-		else if (chance >= 0.975) { // remove the connection.
-			std::cout << "Connection erased!" << std::endl;
-			nodeList[node1].connectedNodes.erase(nodeList[node1].connectedNodes.begin() + connID);
+		if (chance >= 0.5) { // remove the connection.
+			//std::cout << "Connection erased!" << std::endl;
+			//delete nodeList[connID];
+			nodeList[node1]->connectedNodes.erase(nodeList[node1]->connectedNodes.begin() + connID);
+			return;
 		}
-
-		nodeList[node1].weights[connID] = nodeList[node1].weights[connID] + (world->nextRand() * 2 - 1) * world->worldMutator;
+		else {
+			//std::cout << "Connection mutated!" << std::endl;
+			nodeList[node1]->weights[connID] = nodeList[node1]->weights[connID] + (world->nextRand() * 2 - 1) * world->worldMutator;
+		}
 
 	}
 	else {
-		if (chance > 0.99) { // create new connection
-			//std::cout << "New connection made!" << std::endl;
-			ConnectNode(node1, node2);
-		}
+		//std::cout << "New connection made!" << std::endl;
+		ConnectNode(node1, node2);
 	}
 }
 
@@ -152,7 +216,7 @@ void NeuralNet::Sigmoid() {
 
 	for (int i = nodeList.size() - inputs.size() - outputs.size(); i >= 0; i--) {
 
-		//nodeList[i + inputs.size()].Sigmoid();
+		//nodeList[i + inputs.size()]->Sigmoid();
 
 	}
 
@@ -170,19 +234,19 @@ std::vector<double> NeuralNet::send(std::vector<double> inVals)
 	}
 
 	for (int i = 0; i < inputs.size(); i++) {
-		nodeList[i].addValue(inVals[i]);
-		nodeList[i].passThru();
+		nodeList[i]->addValue(inVals[i]);
+		nodeList[i]->passThru();
 	}
 
 	for (int i = nodeList.size() - inputs.size() - outputs.size(); i >= 0; i--) {
 
-		nodeList[i + inputs.size()].passThru();
+		nodeList[i + inputs.size()]->passThru();
 
 	}
 	
 	for (int i = 0; i < outputs.size(); i++) {
 
-		outs.push_back(nodeList[nodeList.size() - outputs.size() + i].getValue());
+		outs.push_back(nodeList[nodeList.size() - outputs.size() + i]->getValue());
 
 	}
 
@@ -198,8 +262,8 @@ std::vector<double> NeuralNet::send(double* inVals, int size) {
 	return send(inArr);
 }
 
-NeuralNet* NeuralNet::mutate(double m) {
-	NeuralNet* buffer = new NeuralNet(*this, m);
+NeuralNet* NeuralNet::mutate() {
+	NeuralNet* buffer = new NeuralNet(*this, world->worldMutator);
 
 	return buffer;
 }
