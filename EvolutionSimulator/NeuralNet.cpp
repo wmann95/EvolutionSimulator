@@ -88,10 +88,21 @@ NeuralNet::NeuralNet(const NeuralNet& old, double m) {
 	for (int i = 0; i < old.nodeList.size(); i++) {
 		// i will represent the id in the new nodeList.
 
-		for (int j = 0; j < old.nodeList[i]->connectedNodes.size(); j++) {
-			int id = old.nodeList[i]->connectedNodes[j]->id; // This id refers to the id that this node connects to, as per the last nodelist.
+		for (int j = 0; j < old.nodeList[i]->toNodes.size(); j++) {
+			int id = old.nodeList[i]->toNodes[j]->id; // This id refers to the id that this node connects to, as per the last nodelist.
+
+			//TODO: Something is causing the previous cell to have incorrect tonode ids. Have to fix, causing crashes.
+
+			if (id < 0) {
+				id = 0;
+			}
+			else if (id >= old.nodeList.size()) {
+				id = old.nodeList.size() - 1;
+			}
 
 			ConnectNode(i, id, old.nodeList[i]->getWeight(j)); // (1 / (1 + exp((*world).nextRand()))) / 1000.0
+
+			// Unused code currently, decided to go a different route but keeping this for posterity and reference.
 			/*
 			if (id < nodeList.size() && i < nodeList.size()) {
 				ConnectNode(i, id);
@@ -123,19 +134,74 @@ NeuralNet::NeuralNet(const NeuralNet& old, double m) {
 
 		double chance = world->nextRand();
 
-		if (chance >= 0.95) {
-			Node* n = new Node(nodeList.size());
+		if (chance >= 0.9) {
+			int hiddenNodeCount = nodeList.size() - inputs.size() - outputs.size();
 
-			int placement = inputs.size() + (int)((nodeList.size() - inputs.size() - outputs.size()) * world->nextRand());
+			if (chance >= 0.95) {
 
-			for (int j = inputs.size() + placement; j < nodeList.size(); j++) {
-				nodeList[j]->id += 1;
+				int placement = inputs.size() + (int)((nodeList.size() - inputs.size() - outputs.size()) * world->nextRand());
+
+				Node* n = new Node(placement);
+
+				nodeList.insert(nodeList.begin() + placement, n);
+
+				for (int j = placement + 1; j < nodeList.size(); j++) {
+					nodeList[j]->id += 1;
+				}
+
+				std::cout << "New node! " << nodeList.size() << std::endl;
 			}
+			else if(hiddenNodeCount > 0){
+				unsigned int nodeID = inputs.size() + floor(hiddenNodeCount * world->nextRand());
 
-			nodeList.insert(nodeList.begin() + placement, n);
-			//std::cout << "New node! " << nodeList.size() << std::endl;
+				Node* n = nodeList[nodeID];
+
+
+				//delete nodeList[inputs.size() + nodeID];
+				//nodeList.erase(nodeList.begin() + nodeID);
+
+				for (int j = nodeID + 1; j < nodeList.size(); j++) { // Go through all of the nodes that will be impacted by the removal, including the removed.
+
+					nodeList[j]->id--; // update their id to represent the lost node.
+				}
+
+				std::vector<Node*> buffer = n->fromNodes;
+
+				nodeList.erase(nodeList.begin() + nodeID);
+				delete n;
+
+
+				//for (int j = nodeID; j < nodeList.size(); j++) { // Go through all of the nodes that will be impacted by the removal, including the removed.
+
+
+				//	std::vector<Node*> buffer = nodeList[j]->fromNodes; // get all the connections the this node has
+
+				//	for (int k = 0; k < buffer.size(); k++) {
+
+				//		unsigned int connID = buffer[k]->getConnectionTo(nodeList[j]); // get the old connection to this node
+
+				//		double weight = buffer[k]->getWeight(connID);
+
+				//		buffer[k]->toNodes.erase(nodeList[j]->toNodes.begin() + connID); // and erase it.
+
+				//		//int id2 = (nodeList.size() - 2) * world->nextRand();
+
+				//		//ConnectToRandomNode()
+
+				//	}
+
+				//}
+
+
+//				for (int j = 0; j < buffer.size(); j++) {
+//					ConnectToRandomNode(buffer[j]->id);
+//				}
+
+
+				std::cout << "Erased a node! " << nodeList.size() << std::endl;
+			}
 		}
-		else if (chance >= 0.4) {
+		else if (chance >= 0.8) {
 			int id1 = (nodeList.size() - 1) * world->nextRand();
 			int id2 = (nodeList.size() - 1) * world->nextRand();
 
@@ -149,16 +215,29 @@ NeuralNet::NeuralNet(const NeuralNet& old, double m) {
 
 }
 
+void NeuralNet::ConnectToRandomNode(int node) {
+	int id2 = (nodeList.size() - 1) * world->nextRand();
+
+	ConnectNode(node, id2);
+}
+
+void NeuralNet::ConnectToRandomNode(int node, double weight) {
+
+	int id2 = (nodeList.size() - 1) * world->nextRand();
+
+	ConnectNode(node, id2, weight);
+}
+
 bool NeuralNet::recurseLoopFinder(Node* ntf, Node* node) {
-	if (node->connectedNodes.size() == 0) {
+	if (node->toNodes.size() == 0) {
 		return false;
 	}
 	if (node == ntf) {
 		return true;
 	}
 	
-	for (int i = 0; node->connectedNodes.size(); i++) {
-		recurseLoopFinder(ntf, node->connectedNodes[i]);
+	for (int i = 0; node->toNodes.size(); i++) {
+		recurseLoopFinder(ntf, node->toNodes[i]);
 	}
 
 	return false;
@@ -184,45 +263,48 @@ void NeuralNet::MutateConnection(int node1, int node2) {
 	double chance = world->nextRand();
 
 	if (nodeList[node1]->isConnectedTo(nodeList[node2])) {
-		int connID = nodeList[node1]->getConnection(nodeList[node2]);
+		int connID = nodeList[node1]->getConnectionTo(nodeList[node2]);
 
 		
 		//std::cout << "Connection found!" << std::endl;
 
-		if (chance >= 0.5) { // remove the connection.
-			//std::cout << "Connection erased!" << std::endl;
-			//delete nodeList[connID];
-			nodeList[node1]->connectedNodes.erase(nodeList[node1]->connectedNodes.begin() + connID);
+		if (chance >= 0.8) { // remove the connection.
+			std::cout << "Connection erased!" << std::endl;
+
+			nodeList[node1]->toNodes.erase(nodeList[node1]->toNodes.begin() + connID);
 			return;
 		}
 		else {
-			//std::cout << "Connection mutated!" << std::endl;
+			std::cout << "Connection mutated!" << std::endl;
 			nodeList[node1]->weights[connID] = nodeList[node1]->weights[connID] + (world->nextRand() * 2 - 1) * world->worldMutator;
 		}
 
 	}
 	else {
-		//std::cout << "New connection made!" << std::endl;
+		std::cout << "New connection made!" << std::endl;
 		ConnectNode(node1, node2);
 	}
 }
 
+
+// This is an unused function currently as I found that sigmoiding the values of the neural network resulted in uninteresting
+// behaviors. I may use it in the future though.
 void NeuralNet::Sigmoid() {
 
 
-	//for (int i = 0; i < outputs.size(); i++) {
-		//outputs[i].Sigmoid();
-	//}
+	for (int i = 0; i < outputs.size(); i++) {
+		outputs[i]->Sigmoid();
+	}
 
 	for (int i = nodeList.size() - inputs.size() - outputs.size(); i >= 0; i--) {
 
-		//nodeList[i + inputs.size()]->Sigmoid();
+		nodeList[i + inputs.size()]->Sigmoid();
 
 	}
 
-	//for (int i = 0; i < inputs.size(); i++) {
-		//inputs[i].Sigmoid();
-	//}
+	for (int i = 0; i < inputs.size(); i++) {
+		inputs[i]->Sigmoid();
+	}
 }
 
 std::vector<double> NeuralNet::send(std::vector<double> inVals)

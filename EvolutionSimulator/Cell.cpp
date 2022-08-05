@@ -32,7 +32,7 @@ Cell::Cell(const Cell& oldCell, int id) {
 	this->foodEaten.clear();
 	this->foodEaten = std::vector<int>();
 
-	float colorMutation = 0.1;
+	float colorMutation = world->worldMutator / 100.0;
 
 	color = (oldCell.color) * (1.0f - colorMutation) + (glm::vec3(world->nextRand(), world->nextRand(), world->nextRand())) * colorMutation;
 
@@ -53,7 +53,7 @@ Cell::~Cell() {
 }
 
 
-void Cell::Update(int deltaTime) {
+void Cell::Update(double deltaTime) {
 
 
 	if (energy <= 0) {
@@ -70,7 +70,7 @@ void Cell::Update(int deltaTime) {
 
 	//Food* closest = world->getNearestFood(xPos, yPos, foodEaten);
 
-	lifeTime += deltaTime / 1000.0;
+	lifeTime += deltaTime;
 
 	double ins[] = { xPos, yPos, targetFood == nullptr ? 1000.0 : targetFood->getX(), targetFood == nullptr ? 1000.0 : targetFood->getY() };
 
@@ -83,10 +83,10 @@ void Cell::Update(int deltaTime) {
 	double minAccel = -1.0;
 
 	double rotAcc = vec[0] - vec[1];
-	rotation += rotAcc * pow(deltaTime / 1000.0, 2) * 100;
+	rotation += rotAcc * pow(deltaTime, 2) * 100;
 
 	double accel = vec[2] - vec[3];
-	velocity += accel * pow(deltaTime / 1000.0, 2) * 0.5;
+	velocity += accel * pow(deltaTime, 2) * 0.5;
 
 	//velocity = 0.005;
 
@@ -95,8 +95,9 @@ void Cell::Update(int deltaTime) {
 	if (rotation > 3.14159 * 2) { rotation -= M_PI * 2; }
 	if (rotation < 0) { rotation += M_PI * 2; }
 
-	if (abs(velocity) >= 0.005) {
+	if (abs(velocity) >= 0.01) {
 		energy = 0;
+		std::cout << "Died from overspeed" << std::endl;
 		return;
 	}
 
@@ -106,10 +107,10 @@ void Cell::Update(int deltaTime) {
 	if (abs(velocity) > 0) distanceTraveled += sqrt(dX * dX + dY * dY);
 
 	double dSenergyCost = abs(std::sqrt(dX * dX + dY * dY)) * 1.0;
-	double dVenergyCost = abs( accel * (deltaTime / 1000.0) * (deltaTime / 1000.0)) * 100;
-	double dRenergyCost = abs( rotAcc * (deltaTime / 1000.0)) * 0.1;
+	double dVenergyCost = abs( accel * (deltaTime) * (deltaTime)) * 100;
+	double dRenergyCost = abs( rotAcc * (deltaTime)) * 0.1;
 
-	double energycost = (deltaTime / 1000.0) * 1.0 + dVenergyCost + dRenergyCost + dSenergyCost;
+	double energycost = dVenergyCost + dRenergyCost + dSenergyCost + deltaTime * 5;
 
 	//std::cout << energycost << std::endl;
 
@@ -126,7 +127,7 @@ void Cell::Update(int deltaTime) {
 
 		double dist = targetFood->getDist(xPos, yPos);
 		
-		if (dist < 0.035) {
+		if (dist < foodGrabDistance) {
 			//std::cout << "foodEatenTest: "  << targetFood->getID() << std::endl;
 			//foodEaten.push_back(closest->getID());
 

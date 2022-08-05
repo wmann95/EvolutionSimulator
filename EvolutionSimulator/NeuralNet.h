@@ -12,9 +12,11 @@ private:
 	std::vector<Node*> nodeList;
 	std::vector<Node*> outputs; // Node pointers to specific nodes in the nodelist that are the outputs.
 	World* world;
-	int muts = 10;
+	const int muts = 10;
 	void ConnectNode(int node1, int node2);
 	void ConnectNode(int node1, int node2, double weight);
+	void ConnectToRandomNode(int node);
+	void ConnectToRandomNode(int node, double weight);
 	void MutateConnection(int node1, int node2);
 	bool recurseLoopFinder(Node* ntf, Node* node);
 public:

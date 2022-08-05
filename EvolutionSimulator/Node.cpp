@@ -5,15 +5,17 @@ Node::Node(int id){
 	this->id = id;
 }
 
+
 void Node::ConnectNode(Node *n, double weight) {
 	
-	connectedNodes.push_back(n);
+	toNodes.push_back(n);
+	n->fromNodes.push_back(this);
 	weights.push_back(weight);
 }
 
 void Node::passThru() {
-	for (int i = 0; i < connectedNodes.size(); i++) {
-		connectedNodes[i]->addValue(sum * weights[i]);
+	for (int i = 0; i < toNodes.size(); i++) {
+		toNodes[i]->addValue(sum * weights[i]);
 	}
 
 	/*for (int i = 0; i < connectedNodes.size(); i++) {
@@ -45,8 +47,8 @@ double Node::getWeight(int conn) const {
 
 bool Node::isConnectedTo(Node* n) {
 	
-	for (int i = 0; i < connectedNodes.size(); i++) {
-		if (n == connectedNodes[i]) {
+	for (int i = 0; i < toNodes.size(); i++) {
+		if (n == toNodes[i]) {
 			return true;
 		}
 	}
@@ -54,10 +56,10 @@ bool Node::isConnectedTo(Node* n) {
 	return false;
 }
 
-int Node::getConnection(Node* n) {
+int Node::getConnectionTo(Node* n) {
 
-	for (int i = 0; i < connectedNodes.size(); i++) {
-		if (n == connectedNodes[i]) {
+	for (int i = 0; i < toNodes.size(); i++) {
+		if (n == toNodes[i]) {
 			return i;
 		}
 	}

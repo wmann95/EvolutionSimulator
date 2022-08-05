@@ -20,6 +20,7 @@ private:
 	double scale = 0.0;
 	double lifeTime = 0.0;
 	double distanceTraveled = 0;
+	double foodGrabDistance = 0.035;
 	int totalFood = 0;
 	glm::vec3 color = glm::vec3(0,0,0);
 	Triangle triangle;
@@ -36,7 +37,7 @@ public:
 	Cell(World* world, int id);
 	Cell(const Cell&, int id);
 	~Cell();
-	void Update(int deltaTime);
+	void Update(double deltaTime = (10.0 / 1000.0));
 	void Render();
 	double getLifeTime();
 	bool isAlive();

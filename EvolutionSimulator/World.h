@@ -20,11 +20,11 @@ private:
 	std::string seed;
 	std::vector<Cell*> cellList;
 	std::vector<Food*> foodList;
-	int cellCount = 1000;
+	int cellCount = 200;
 	double camX = 0;
 	double camY = 0.6;
 	double camSpeed = 0.025;
-	double foodEnergy = 3.0;
+	double foodEnergy = 5.0;
 	double foodMultiplier = 1.5;
 	int foodChainLength = 200;
 	int foodChainCount = 1;

@@ -4,7 +4,8 @@
 class Node
 {
 private:
-	std::vector<Node*> connectedNodes;
+	std::vector<Node*> toNodes;
+	std::vector<Node*> fromNodes;
 	std::vector<double> weights;
 	//std::pair<int, int> connIDs;
 	double sum = 0;
@@ -13,7 +14,7 @@ public:
 	Node(int id);
 	void ConnectNode(Node *n, double weight);
 	bool isConnectedTo(Node* n);
-	int getConnection(Node* n);
+	int getConnectionTo(Node* n);
 	void passThru();
 	void addValue(double val);
 	double getValue() const;

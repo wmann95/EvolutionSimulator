@@ -72,7 +72,7 @@ void World::GenerateFood() {
 		double angle = 0;
 		double dist = 0.1;
 		double x = 0;
-		double y = 0.1;
+		double y = 0.035;
 
 		//std::cout << "[Angle: " << angle << ", dist: " << dist << ", X: " << x << ", Y " << y << "]" << std::endl;
 
@@ -107,7 +107,7 @@ void World::Update(int deltaTime)
 
 		this->SortCells();
 
-		//std::cout << "Sorted! Highest score is: " << getScore(cellList[0]) << std::endl;
+		std::cout << "Sorted! Highest score is: " << getScore(cellList[0]) << std::endl;
 
 		std::vector<Cell*> winnerList = std::vector<Cell*>();
 		std::vector<Cell*>().swap(winnerList);
@@ -129,7 +129,6 @@ void World::Update(int deltaTime)
 		std::vector<Cell*> newCells;
 
 		for (int i = 0; i < cellList.size(); i++) {
-			//std::cout << "Selected winner: " << getScore(winnerList[i % winnerList.size()]) << std::endl;
 
 			newCells.push_back(new Cell(*winnerList[i % winnerList.size()], i));
 			//newCells.push_back(new Cell(*cellList[0], worldMutator));
@@ -154,7 +153,7 @@ void World::Update(int deltaTime)
 
 	for (int i = 0; i < cellList.size(); i++) {
 		if (!cellList[i]->isAlive()) continue;
-		cellList[i]->Update(deltaTime);
+		cellList[i]->Update();
 	}
 
 }
@@ -173,7 +172,7 @@ void World::Render() {
 }
 
 double World::nextRand() {
-	return ((double)(rand() % 100)) / 100.0;
+	return ((double)(rand() % 10000)) / 10000.0;
 }
 
 unsigned int World::getSum(std::string seed) {
@@ -209,8 +208,9 @@ std::string World::gen_random(const int length) {
 
 double getScore(Cell* cell) {
 	//std::cout << cell->getTotalFood() << std::endl;
-	//return cell->getTotalFood() * 1.0 + cell->getDistanceTravelled() * 2;
-	return cell->getTotalFood();
+	//return cell->getDistanceTravelled();
+	return cell->getTotalFood() + cell->getDistanceTravelled() / 100.0;
+	//return cell->getLifeTime();
 }
 
 void World::SortCells() {

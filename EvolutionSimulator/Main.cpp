@@ -13,7 +13,7 @@ int main() {
 		// Initialize the opengl window at 800 by 600 pixels.
 		Screen screen(800, 800);
 		// Initialize an instance of a new world with a seed value of "testWorld"
-		World world("");
+		World world("X9T1ILGF");
 
 		long long int millis;
 		long long int deltaTime;
