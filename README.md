@@ -1,4 +1,5 @@
-# OpenGLStuff
-Hello! This is a small project I've been working on for a little while now. I'm learning OpenGL using GLAD, GLFW, and GLM.
+# Evolution Simulator
 
-If you would like to compile this, you will need to place your glad folder, glfw-3.3.5.bin.WIN64 foder, and glm folder folder into the EvolutionSimulator folder. You can otherwise just relink the solution to where the files are located on your computer. You'll also need to add appropriate libraries in the glfw-3.3.5.WIN64 folder to your additional library directories section.
+Greetings! This is a project I've been working on for a while as a bit of a passion project. It started out as a way for me to learn how to use OpenGL and a couple of other libraries, but has turned into a project about simulating evolution through selective pressure and randomly generated mutations in the organisms' neural networks.
+
+To run this, you will have to include the GLAD, GLFW-3.3.7, and GLM libraries.
